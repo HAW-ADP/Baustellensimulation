@@ -1,0 +1,12 @@
+10h01m02s;1h02m03s;1m;30m;30;5;EINFAHRT;200s;3s;10;10s
+startzeit;
+zeitspanne;
+minimalestandzeit;
+maximalestandzeit;
+anzahlAutos;
+parkplatzkapazität;
+startampel;
+baustellenzeit;
+abstandszeit;
+strassenkapazität;
+minimaleampelschaltzeit;

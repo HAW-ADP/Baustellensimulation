@@ -10,7 +10,7 @@ import logik.interfaces.Zeitspanne;
 public class Gott implements Iterable<Zustand> {
 	private final Zeitspanne baustellenZeit;
 	private final Zeitspanne autoAbstand;
-	private final int strassenFassungsverm�gen;
+	private final int strassenFassungsvermoegen;
 	private final Zeitspanne minimaleAmpelSchaltzeit;
 	
 	private final Zustand startZustand;
@@ -18,10 +18,10 @@ public class Gott implements Iterable<Zustand> {
 	
 	public Gott(Uhrzeit startZeit, List<Uhrzeit> autoUhrzeiten, List<Zeitspanne> autoStandzeiten, 
 			int parkplatzMaximum, Ampel startAmpel, Zeitspanne baustellenZeit,
-			Zeitspanne autoAbstand, int strassenFassungsverm�gen, Zeitspanne minimaleAmpelSchaltzeit) {
+			Zeitspanne autoAbstand, int strassenFassungsvermoegen, Zeitspanne minimaleAmpelSchaltzeit) {
 		this.baustellenZeit = baustellenZeit;
 		this.autoAbstand = autoAbstand;
-		this.strassenFassungsverm�gen = strassenFassungsverm�gen;
+		this.strassenFassungsvermoegen = strassenFassungsvermoegen;
 		this.minimaleAmpelSchaltzeit = minimaleAmpelSchaltzeit;
 		
 		this.startZustand = new Zustand(startZeit, autoUhrzeiten, autoStandzeiten, parkplatzMaximum, startAmpel);
@@ -37,9 +37,9 @@ public class Gott implements Iterable<Zustand> {
 
 		@Override
 		public boolean hasNext() {
-			Zustand current = (zustandsHistorie.size() == 0 ? null : zustandsHistorie.get(zustandsHistorie.size()-1));
-			Zustand next = (zustandsHistorie.size() == 0 ? startZustand : Zustand.naechsterZustand(zustandsHistorie.get(zustandsHistorie.size()-1),
-					baustellenZeit, autoAbstand, strassenFassungsverm�gen, minimaleAmpelSchaltzeit));
+			Zustand current = (zustandsHistorie.isEmpty() ? null : zustandsHistorie.get(zustandsHistorie.size()-1));
+			Zustand next = (zustandsHistorie.isEmpty() ? startZustand : Zustand.naechsterZustand(zustandsHistorie.get(zustandsHistorie.size()-1),
+					baustellenZeit, autoAbstand, strassenFassungsvermoegen, minimaleAmpelSchaltzeit));
 			
 			return current != next;
 		}
@@ -47,7 +47,7 @@ public class Gott implements Iterable<Zustand> {
 		@Override
 		public Zustand next() {
 			Zustand next = (zustandsHistorie.size() == 0 ? startZustand : Zustand.naechsterZustand(zustandsHistorie.get(zustandsHistorie.size()-1),
-							baustellenZeit, autoAbstand, strassenFassungsverm�gen, minimaleAmpelSchaltzeit));
+							baustellenZeit, autoAbstand, strassenFassungsvermoegen, minimaleAmpelSchaltzeit));
 			zustandsHistorie.add(next);
 			return next;
 		}

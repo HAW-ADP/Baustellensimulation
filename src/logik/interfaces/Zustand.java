@@ -3,7 +3,7 @@ package logik.interfaces;
 import java.util.List;
 
 public interface Zustand {
-	public Zustand naechsterZustand(Zeitspanne baustellenZeit, int strassenFassungsverm�gen,
+	public Zustand naechsterZustand(Zeitspanne baustellenZeit, int strassenFassungsvermoegen,
 			Zeitspanne minimaleAmpelSchaltzeit);
 	
 	public Uhrzeit naechsteUhrzeit();

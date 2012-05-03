@@ -90,18 +90,18 @@ public class Zustand {
 	}
 	
 	public static Zustand naechsterZustand(Zustand alterZustand, Zeitspanne baustellenZeit,
-			Zeitspanne autoAbstand, int strassenFassungsverm�gen, Zeitspanne minimaleAmpelSchaltzeit) {
+			Zeitspanne autoAbstand, int strassenFassungsvermoegen, Zeitspanne minimaleAmpelSchaltzeit) {
 		
-			Uhrzeit naechsteZeit = naechsteZeit(alterZustand, baustellenZeit, autoAbstand, strassenFassungsverm�gen, minimaleAmpelSchaltzeit);
+			Uhrzeit naechsteZeit = naechsteZeit(alterZustand, baustellenZeit, autoAbstand, strassenFassungsvermoegen, minimaleAmpelSchaltzeit);
 			// nix passiert?
 			if (alterZustand.zeit == naechsteZeit) return alterZustand;
 			
-			List<Uhrzeit> naechsteAutoUhrzeiten = naechsteAutoUhrzeiten(alterZustand, naechsteZeit, strassenFassungsverm�gen);
-			int naechsteEinfahrt = naechsteEinfahrt(alterZustand, naechsteZeit, autoAbstand, strassenFassungsverm�gen);
+			List<Uhrzeit> naechsteAutoUhrzeiten = naechsteAutoUhrzeiten(alterZustand, naechsteZeit, strassenFassungsvermoegen);
+			int naechsteEinfahrt = naechsteEinfahrt(alterZustand, naechsteZeit, autoAbstand, strassenFassungsvermoegen);
 			Warteschlange naechsteBaustelle = naechsteBaustelle(alterZustand, naechsteZeit, autoAbstand, baustellenZeit);
-			Warteschlange naechsterParkplatz = naechsterParkplatz(alterZustand, naechsteZeit, baustellenZeit, strassenFassungsverm�gen);
-			List<Zeitspanne> naechsteAutoStandzeiten = naechsteAutoStandzeiten(alterZustand, naechsteZeit, naechsterParkplatz, baustellenZeit, strassenFassungsverm�gen);
-			int naechsteAusfahrt = naechsteAusfahrt(alterZustand, naechsteZeit, autoAbstand, strassenFassungsverm�gen);
+			Warteschlange naechsterParkplatz = naechsterParkplatz(alterZustand, naechsteZeit, baustellenZeit, strassenFassungsvermoegen);
+			List<Zeitspanne> naechsteAutoStandzeiten = naechsteAutoStandzeiten(alterZustand, naechsteZeit, naechsterParkplatz, baustellenZeit, strassenFassungsvermoegen);
+			int naechsteAusfahrt = naechsteAusfahrt(alterZustand, naechsteZeit, autoAbstand, strassenFassungsvermoegen);
 			Ampel naechsteAmpel = naechsteAmpel(alterZustand, naechsteZeit, minimaleAmpelSchaltzeit);
 			Uhrzeit naechsteAmpelSchaltzeit = naechsteAmpelSchaltzeit(alterZustand, naechsteZeit, naechsteAmpel);
 		
@@ -111,11 +111,11 @@ public class Zustand {
 	}
 
 	private static Uhrzeit naechsteZeit(Zustand alterZustand, Zeitspanne baustellenZeit,
-			Zeitspanne autoAbstand, int strassenFassungsverm�gen, Zeitspanne minimaleAmpelSchaltzeit) {
+			Zeitspanne autoAbstand, int strassenFassungsvermoegen, Zeitspanne minimaleAmpelSchaltzeit) {
 		List<Uhrzeit> zeiten = new ArrayList<Uhrzeit>();
 		
 		// auf die Einfahrt? Einfahrt voll?
-		if (alterZustand.autoUhrzeiten.size() > 0 && alterZustand.einfahrt < strassenFassungsverm�gen)
+		if (alterZustand.autoUhrzeiten.size() > 0 && alterZustand.einfahrt < strassenFassungsvermoegen)
 			zeiten.add(alterZustand.autoUhrzeiten.get(0));
 		
 		// auf die Baustelle? Ampel gr�n? Letztes Auto in der Baustelle >= 3s weg?
@@ -128,7 +128,7 @@ public class Zustand {
 			zeiten.add(alterZustand.baustelle.naechster().addiere(baustellenZeit));
 		
 		// auf die Ausfahrt? Ausfahrt voll?
-		if (alterZustand.parkplatz.laenge() > 0 && alterZustand.ausfahrt < strassenFassungsverm�gen) 
+		if (alterZustand.parkplatz.laenge() > 0 && alterZustand.ausfahrt < strassenFassungsvermoegen) 
 			zeiten.add(alterZustand.parkplatz.naechster());
 		
 		// auf die Baustelle? Ampel gr�n? Letztes Auto in der Baustelle >= 3s weg?
@@ -146,8 +146,8 @@ public class Zustand {
 		return (zeiten.size() > 0 ? zeiten.get(0) : alterZustand.zeit);
 	}
 	
-	private static List<Uhrzeit> naechsteAutoUhrzeiten(Zustand alterZustand, Uhrzeit naechsteZeit, int strassenFassungsverm�gen) {
-		if (alterZustand.autoUhrzeiten.contains(naechsteZeit) && alterZustand.einfahrt < strassenFassungsverm�gen) {
+	private static List<Uhrzeit> naechsteAutoUhrzeiten(Zustand alterZustand, Uhrzeit naechsteZeit, int strassenFassungsvermoegen) {
+		if (alterZustand.autoUhrzeiten.contains(naechsteZeit) && alterZustand.einfahrt < strassenFassungsvermoegen) {
 			List<Uhrzeit> zeiten = new ArrayList<Uhrzeit>();
 			zeiten.addAll(alterZustand.autoUhrzeiten);
 			zeiten.remove(naechsteZeit);
@@ -156,11 +156,11 @@ public class Zustand {
 		return alterZustand.autoUhrzeiten;
 	}
 	
-	private static int naechsteEinfahrt(Zustand alterZustand, Uhrzeit naechsteZeit, Zeitspanne autoAbstand, int strassenFassungsverm�gen) {
+	private static int naechsteEinfahrt(Zustand alterZustand, Uhrzeit naechsteZeit, Zeitspanne autoAbstand, int strassenFassungsvermoegen) {
 		int einfahrt = alterZustand.einfahrt;
 		
 		// Stra�e -> Einfahrt
-		if (alterZustand.autoUhrzeiten.contains(naechsteZeit) && alterZustand.einfahrt < strassenFassungsverm�gen) einfahrt++;
+		if (alterZustand.autoUhrzeiten.contains(naechsteZeit) && alterZustand.einfahrt < strassenFassungsvermoegen) einfahrt++;
 		// Einfahrt -> Baustelle
 		if (alterZustand.zeit.addiere(ZeitspanneImpl.NAECHSTE_ZEITEINHEIT).compareTo(naechsteZeit) == 0 && (alterZustand.baustelle.laenge() == 0 ||
 				alterZustand.baustelle.letzter().addiere(autoAbstand).compareTo(naechsteZeit) > -1) && 
@@ -189,7 +189,7 @@ public class Zustand {
 		return baustelle;
 	}
 
-	private static Warteschlange naechsterParkplatz(Zustand alterZustand, Uhrzeit naechsteZeit, Zeitspanne baustellenZeit, int strassenFassungsverm�gen) {
+	private static Warteschlange naechsterParkplatz(Zustand alterZustand, Uhrzeit naechsteZeit, Zeitspanne baustellenZeit, int strassenFassungsvermoegen) {
 		Warteschlange parkplatz = alterZustand.parkplatz;
 		
 		// Baustelle -> Parkplatz
@@ -200,7 +200,7 @@ public class Zustand {
 		
 		// Parkplatz -> Ausfahrt
 		if (alterZustand.parkplatz.laenge() > 0 && alterZustand.parkplatz.naechster().compareTo(naechsteZeit) == 0 &&
-				alterZustand.ausfahrt < strassenFassungsverm�gen) {
+				alterZustand.ausfahrt < strassenFassungsvermoegen) {
 			parkplatz = parkplatz.entfernen();
 		}
 		
@@ -208,7 +208,7 @@ public class Zustand {
 	}
 
 	private static List<Zeitspanne> naechsteAutoStandzeiten(Zustand alterZustand, Uhrzeit naechsteZeit, Warteschlange naechsterParkplatz, Zeitspanne baustellenZeit,
-			int strassenFassungsverm�gen) {
+			int strassenFassungsvermoegen) {
 		if (alterZustand.baustelle.laenge() > 0 && (alterZustand.ampel == Ampel.EINFAHRT || alterZustand.ampel == Ampel.STOP_AUSFAHRT) && 
 				alterZustand.baustelle.naechster().addiere(baustellenZeit).compareTo(naechsteZeit) == 0) {
 			List<Zeitspanne> zeiten = new ArrayList<Zeitspanne>();
@@ -219,12 +219,12 @@ public class Zustand {
 		return alterZustand.autoStandzeiten;
 	}
 
-	private static int naechsteAusfahrt(Zustand alterZustand, Uhrzeit naechsteZeit, Zeitspanne autoAbstand, int strassenFassungsverm�gen) {
+	private static int naechsteAusfahrt(Zustand alterZustand, Uhrzeit naechsteZeit, Zeitspanne autoAbstand, int strassenFassungsvermoegen) {
 		int ausfahrt = alterZustand.ausfahrt;
 		
 		// Parkplatz -> Ausfahrt
 		if (alterZustand.parkplatz.laenge() > 0 && alterZustand.parkplatz.naechster().compareTo(naechsteZeit) == 0 &&
-				alterZustand.ausfahrt < strassenFassungsverm�gen) ausfahrt++;
+				alterZustand.ausfahrt < strassenFassungsvermoegen) ausfahrt++;
 		
 		// Ausfahrt -> Baustelle
 		if (alterZustand.zeit.addiere(ZeitspanneImpl.NAECHSTE_ZEITEINHEIT).compareTo(naechsteZeit) == 0 &&

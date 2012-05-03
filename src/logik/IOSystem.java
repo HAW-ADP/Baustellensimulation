@@ -60,7 +60,7 @@ public class IOSystem {
 		Ampel startAmpel = Ampel.EINFAHRT;
 		Zeitspanne baustellenZeit = new ZeitspanneImpl(0,0,20);
 		Zeitspanne autoAbstand = new ZeitspanneImpl(0,0,3);
-		int strassenFassungsverm�gen = 10;
+		int strassenFassungsvermoegen = 10;
 		Zeitspanne minimaleAmpelSchaltzeit = new ZeitspanneImpl(0,0,10);
 		
         try {
@@ -88,7 +88,7 @@ public class IOSystem {
                 startAmpel = Ampel.parseString(sAry[6]);
                 baustellenZeit = new ZeitspanneImpl(sAry[7]);
                 autoAbstand = new ZeitspanneImpl(sAry[8]);
-                strassenFassungsverm�gen = Integer.parseInt(sAry[9]);
+                strassenFassungsvermoegen = Integer.parseInt(sAry[9]);
                 minimaleAmpelSchaltzeit = new ZeitspanneImpl(sAry[10]);
             
             } catch (IOException e) {
@@ -101,6 +101,6 @@ public class IOSystem {
         autoUhrzeiten = Nuetzliches.generiereListe(startZeit, zeitSpanne, anzahlAutos, true);
         autoStandzeiten = Nuetzliches.generiereListe(minimaleStandzeit, maximaleStandzeit, anzahlAutos, false);
         
-        return new Gott(startZeit, autoUhrzeiten, autoStandzeiten, parkplatzMaximum, startAmpel, baustellenZeit, autoAbstand, strassenFassungsverm�gen, minimaleAmpelSchaltzeit);
+        return new Gott(startZeit, autoUhrzeiten, autoStandzeiten, parkplatzMaximum, startAmpel, baustellenZeit, autoAbstand, strassenFassungsvermoegen, minimaleAmpelSchaltzeit);
 	}
 }

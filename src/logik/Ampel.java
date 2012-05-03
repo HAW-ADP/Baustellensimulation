@@ -4,10 +4,10 @@ import logik.interfaces.Uhrzeit;
 import logik.interfaces.Zeitspanne;
 
 public enum Ampel {
-	EINFAHRT("Gr�n: auf den Parkplatz"),
-	AUSFAHRT("Gr�n: runter vom Parkplatz"),
-	STOP_EINFAHRT("Gr�n: niemand (hiernach folgt EINFAHRT)"),
-	STOP_AUSFAHRT("Gr�n: niemand (hiernach folgt AUSFAHRT)");
+	EINFAHRT("Grün: auf den Parkplatz"),
+	AUSFAHRT("Grün: runter vom Parkplatz"),
+	STOP_EINFAHRT("Grün: niemand (hiernach folgt EINFAHRT)"),
+	STOP_AUSFAHRT("Grün: niemand (hiernach folgt AUSFAHRT)");
 	
 	private String bezeichnung;
 	
@@ -30,7 +30,7 @@ public enum Ampel {
 			int parkplatzAnzahl, int parkplatzMaximaleAnzahl, int ausfahrtAnzahl, Uhrzeit letzteSchaltzeit,
 			Uhrzeit derzeitigeZeit, Zeitspanne minimaleSchaltzeit) {
 		
-		// minimaleSchaltzeit noch nicht vorbei (wenn auf gr�n)?
+		// minimaleSchaltzeit noch nicht vorbei (wenn auf grün)?
 		if ((derzeitigeAmpel == EINFAHRT || derzeitigeAmpel == AUSFAHRT) && 
 				derzeitigeZeit.addiere(minimaleSchaltzeit).compareTo(letzteSchaltzeit) < 0) return derzeitigeAmpel;
 		

@@ -1,4 +1,4 @@
-package de.haw.ad.a2;
+package logik;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import de.haw.ad.a2.interfaces.Uhrzeit;
-import de.haw.ad.a2.interfaces.Zeitspanne;
-import static de.haw.ad.a2.IOSystem.*;
+import logik.interfaces.Uhrzeit;
+import logik.interfaces.Zeitspanne;
+import static logik.IOSystem.*;
 
 public class Test {
 	public static void main(String[] args) {

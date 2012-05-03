@@ -1,7 +1,7 @@
-package de.haw.ad.a2;
+package logik;
 
-import de.haw.ad.a2.interfaces.Uhrzeit;
-import de.haw.ad.a2.interfaces.Zeitspanne;
+import logik.interfaces.Uhrzeit;
+import logik.interfaces.Zeitspanne;
 
 public class UhrzeitImpl implements Uhrzeit {
 	private final int stunden;

@@ -1,4 +1,4 @@
-package de.haw.ad.a2;
+package logik;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,8 +13,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import de.haw.ad.a2.interfaces.Uhrzeit;
-import de.haw.ad.a2.interfaces.Zeitspanne;
+import logik.interfaces.Uhrzeit;
+import logik.interfaces.Zeitspanne;
 
 public class IOSystem {
 	public static final String SEPERATOR = ";";
@@ -60,7 +60,7 @@ public class IOSystem {
 		Ampel startAmpel = Ampel.EINFAHRT;
 		Zeitspanne baustellenZeit = new ZeitspanneImpl(0,0,20);
 		Zeitspanne autoAbstand = new ZeitspanneImpl(0,0,3);
-		int strassenFassungsvermögen = 10;
+		int strassenFassungsvermï¿½gen = 10;
 		Zeitspanne minimaleAmpelSchaltzeit = new ZeitspanneImpl(0,0,10);
 		
         try {
@@ -70,8 +70,8 @@ public class IOSystem {
                 
                 /* startzeit;zeitspanne;
                  * minimalestandzeit;maximalestandzeit;
-                 * anzahlAutos;parkplatzkapazität;startampel;
-                 * baustellenzeit;abstandszeit;strassenkapazität;
+                 * anzahlAutos;parkplatzkapazitï¿½t;startampel;
+                 * baustellenzeit;abstandszeit;strassenkapazitï¿½t;
                  * minimaleampelschaltzeit;
                  */
                 if (sAry.length != 11) {
@@ -88,7 +88,7 @@ public class IOSystem {
                 startAmpel = Ampel.parseString(sAry[6]);
                 baustellenZeit = new ZeitspanneImpl(sAry[7]);
                 autoAbstand = new ZeitspanneImpl(sAry[8]);
-                strassenFassungsvermögen = Integer.parseInt(sAry[9]);
+                strassenFassungsvermï¿½gen = Integer.parseInt(sAry[9]);
                 minimaleAmpelSchaltzeit = new ZeitspanneImpl(sAry[10]);
             
             } catch (IOException e) {
@@ -101,6 +101,6 @@ public class IOSystem {
         autoUhrzeiten = Nuetzliches.generiereListe(startZeit, zeitSpanne, anzahlAutos, true);
         autoStandzeiten = Nuetzliches.generiereListe(minimaleStandzeit, maximaleStandzeit, anzahlAutos, false);
         
-        return new Gott(startZeit, autoUhrzeiten, autoStandzeiten, parkplatzMaximum, startAmpel, baustellenZeit, autoAbstand, strassenFassungsvermögen, minimaleAmpelSchaltzeit);
+        return new Gott(startZeit, autoUhrzeiten, autoStandzeiten, parkplatzMaximum, startAmpel, baustellenZeit, autoAbstand, strassenFassungsvermï¿½gen, minimaleAmpelSchaltzeit);
 	}
 }

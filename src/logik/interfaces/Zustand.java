@@ -1,9 +1,9 @@
-package de.haw.ad.a2.interfaces;
+package logik.interfaces;
 
 import java.util.List;
 
 public interface Zustand {
-	public Zustand naechsterZustand(Zeitspanne baustellenZeit, int strassenFassungsvermögen,
+	public Zustand naechsterZustand(Zeitspanne baustellenZeit, int strassenFassungsvermï¿½gen,
 			Zeitspanne minimaleAmpelSchaltzeit);
 	
 	public Uhrzeit naechsteUhrzeit();

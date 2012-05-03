@@ -1,4 +1,4 @@
-package de.haw.ad.a2.interfaces;
+package logik.interfaces;
 
 public interface Zeitkonstanten {
 	

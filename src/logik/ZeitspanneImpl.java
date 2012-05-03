@@ -1,6 +1,6 @@
-package de.haw.ad.a2;
+package logik;
 
-import de.haw.ad.a2.interfaces.Zeitspanne;
+import logik.interfaces.Zeitspanne;
 
 public class ZeitspanneImpl implements Zeitspanne {
 	public static Zeitspanne NAECHSTE_ZEITEINHEIT = new ZeitspanneImpl(1);

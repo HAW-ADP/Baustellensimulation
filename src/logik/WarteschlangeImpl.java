@@ -1,12 +1,12 @@
-package de.haw.ad.a2;
+package logik;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import de.haw.ad.a2.interfaces.Uhrzeit;
-import de.haw.ad.a2.interfaces.Warteschlange;
-import de.haw.ad.a2.interfaces.Zeitspanne;
+import logik.interfaces.Uhrzeit;
+import logik.interfaces.Warteschlange;
+import logik.interfaces.Zeitspanne;
 
 public class WarteschlangeImpl implements Warteschlange {
     private int maximaleElemente;

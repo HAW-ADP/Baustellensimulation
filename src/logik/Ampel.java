@@ -1,13 +1,13 @@
-package de.haw.ad.a2;
+package logik;
 
-import de.haw.ad.a2.interfaces.Uhrzeit;
-import de.haw.ad.a2.interfaces.Zeitspanne;
+import logik.interfaces.Uhrzeit;
+import logik.interfaces.Zeitspanne;
 
 public enum Ampel {
-	EINFAHRT("Grün: auf den Parkplatz"),
-	AUSFAHRT("Grün: runter vom Parkplatz"),
-	STOP_EINFAHRT("Grün: niemand (hiernach folgt EINFAHRT)"),
-	STOP_AUSFAHRT("Grün: niemand (hiernach folgt AUSFAHRT)");
+	EINFAHRT("Grï¿½n: auf den Parkplatz"),
+	AUSFAHRT("Grï¿½n: runter vom Parkplatz"),
+	STOP_EINFAHRT("Grï¿½n: niemand (hiernach folgt EINFAHRT)"),
+	STOP_AUSFAHRT("Grï¿½n: niemand (hiernach folgt AUSFAHRT)");
 	
 	private String bezeichnung;
 	
@@ -30,7 +30,7 @@ public enum Ampel {
 			int parkplatzAnzahl, int parkplatzMaximaleAnzahl, int ausfahrtAnzahl, Uhrzeit letzteSchaltzeit,
 			Uhrzeit derzeitigeZeit, Zeitspanne minimaleSchaltzeit) {
 		
-		// minimaleSchaltzeit noch nicht vorbei (wenn auf grün)?
+		// minimaleSchaltzeit noch nicht vorbei (wenn auf grï¿½n)?
 		if ((derzeitigeAmpel == EINFAHRT || derzeitigeAmpel == AUSFAHRT) && 
 				derzeitigeZeit.addiere(minimaleSchaltzeit).compareTo(letzteSchaltzeit) < 0) return derzeitigeAmpel;
 		

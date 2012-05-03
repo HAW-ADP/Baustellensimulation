@@ -1,12 +1,12 @@
-package de.haw.ad.a2;
+package logik;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import de.haw.ad.a2.interfaces.Uhrzeit;
-import de.haw.ad.a2.interfaces.Zeitspanne;
+import logik.interfaces.Uhrzeit;
+import logik.interfaces.Zeitspanne;
 
 public class Nuetzliches {
     public static List<Uhrzeit> generiereListe(Uhrzeit start, Zeitspanne spanne, int anzahl, boolean sortieren) {

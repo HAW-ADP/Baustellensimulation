@@ -83,7 +83,7 @@ public class Test {
 		autoStandzeiten.add(new ZeitspanneImpl("01m11s"));
 		autoStandzeiten.add(new ZeitspanneImpl("01m12s"));
 
-		Gott g = new Gott(startZeit, autoUhrzeiten, autoStandzeiten,
+		Simulation g = new Simulation(startZeit, autoUhrzeiten, autoStandzeiten,
 				parkplaetze, ampel, baustellenZeit, autoAbstandsZeit, strassen,
 				minimaleAmpelSchaltzeit);
 		Iterator<Zustand> it = g.iterator();
@@ -101,7 +101,7 @@ public class Test {
 	}
 
 	private static void testeIO() {
-		Gott g = IOSystem.ladeSimulationsDatei("test.txt");
+		Simulation g = IOSystem.ladeSimulationsDatei("test.txt");
 		Iterator<Zustand> it = g.iterator();
 		IOSystem io = new IOSystem("log.txt");
 		while (it.hasNext())

@@ -39,7 +39,7 @@ public class IOSystem {
 		}
 	}
 	
-	public static Gott ladeSimulationsDatei(String dateiPfad) {
+	public static Simulation ladeSimulationsDatei(String dateiPfad) {
 		/*
 		 * Standardwerte:
 		 * 10h;1h;
@@ -101,6 +101,6 @@ public class IOSystem {
         autoUhrzeiten = Nuetzliches.generiereListe(startZeit, zeitSpanne, anzahlAutos, true);
         autoStandzeiten = Nuetzliches.generiereListe(minimaleStandzeit, maximaleStandzeit, anzahlAutos, false);
         
-        return new Gott(startZeit, autoUhrzeiten, autoStandzeiten, parkplatzMaximum, startAmpel, baustellenZeit, autoAbstand, strassenFassungsvermoegen, minimaleAmpelSchaltzeit);
+        return new Simulation(startZeit, autoUhrzeiten, autoStandzeiten, parkplatzMaximum, startAmpel, baustellenZeit, autoAbstand, strassenFassungsvermoegen, minimaleAmpelSchaltzeit);
 	}
 }

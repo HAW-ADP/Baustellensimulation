@@ -14,6 +14,9 @@ public class Test extends PApplet {
     // Position Wartebereich f�r die Einfahrt
     final private int EINFAHRTWARTEBEREICHX = 170;
     final private int EINFAHRTWARTEBEREICHY = 440;
+    // Position Baustelle
+    final private int BAUSTELLENBEREICHX = 85;
+    final private int BAUSTELLENBEREICHY = 320;
     // Position der Ampel f�r die Einfahrt
     final private int EINFAHRTAMPELX = 160;
     final private int EINFAHRTAMPELY = 450;
@@ -31,13 +34,16 @@ public class Test extends PApplet {
     private int pos = 0;
     private int posEinfahrt = 0;
     private int posAusfahrt = 0;
+    private int posBaustelle = 0;
     private int steps = 0;
     private int stepsEinfahrt = 0;
     private int stepsAusfahrt = 0;
+    private int stepsBaustelle = 0;
     private String ampelEinfahrt = "R";
     private String ampelAusfahrt = "R";
-    private int ampelZustand = 0;
+    private int ampelZustand = 1;
 
+    @Override
     public void setup() {
         size(502, 576);
         background(255);
@@ -51,8 +57,11 @@ public class Test extends PApplet {
         zeichneRaster(AUSFAHRTWARTEBEREICHX, AUSFAHRTWARTEBEREICHY, 10, 1);
         // Wartebereich vor der Einfahrt
         zeichneRaster(EINFAHRTWARTEBEREICHX, EINFAHRTWARTEBEREICHY, 10, 1);
+        // Baustellenbereich
+        zeichneRaster(BAUSTELLENBEREICHX, BAUSTELLENBEREICHY, 1, 4);
     }
 
+    @Override
     public void draw() {
         stroke(0);
         //Immer wieder laden, da das Spielfeld verwischt wird
@@ -71,8 +80,12 @@ public class Test extends PApplet {
         rect(225, 5, 50, 25);
         // Knopf --Auto Wartebereich an der Ausfahrt
         rect(280, 5, 50, 25);
-        // Knopf Ampelzustand
+        // Knopf ++Auto Wartebereich an der Ausfahrt
         rect(335, 5, 50, 25);
+        // Knopf --Auto Wartebereich an der Ausfahrt
+        rect(390, 5, 50, 25);
+        // Knopf Ampelzustand
+        rect(445, 5, 50, 25);
         // Ampel f�r die Einfahrt
         zeichneAmpel(EINFAHRTAMPELX, EINFAHRTAMPELY, ampelEinfahrt);
         // Ampel f�r die Ausfahrt
@@ -88,6 +101,9 @@ public class Test extends PApplet {
         } else if (this.stepsAusfahrt > 0) {
             this.addiereAutos("E", AUSFAHRTWARTEBEREICHX, AUSFAHRTWARTEBEREICHY);
             this.stepsAusfahrt--;
+        } else if (this.stepsBaustelle > 0) {
+            this.addiereAutos("B", BAUSTELLENBEREICHX, BAUSTELLENBEREICHY);
+            this.stepsBaustelle--;
         }
     }
 
@@ -101,6 +117,7 @@ public class Test extends PApplet {
         ellipse(x, y, 10, 10);
     }
 
+    @Override
     public void mouseReleased() {
         if (mouseX >= 5 && mouseX <= 55 && mouseY >= 5 && mouseY <= 30) {
             this.addiereAutos("P", PARKHAUSX, PARKHAUSY);
@@ -121,6 +138,13 @@ public class Test extends PApplet {
             this.subtrahiereAutos("A", AUSFAHRTWARTEBEREICHX,
                     AUSFAHRTWARTEBEREICHY);
         } else if (mouseX >= 335 && mouseX <= 385 && mouseY >= 5
+                && mouseY <= 30) {
+            this.addiereAutos("B", BAUSTELLENBEREICHX, BAUSTELLENBEREICHY);
+        } else if (mouseX >= 390 && mouseX <= 440 && mouseY >= 5
+                && mouseY <= 30) {
+            this.subtrahiereAutos("B", BAUSTELLENBEREICHX,
+                    BAUSTELLENBEREICHY);
+        } else if (mouseX >= 445 && mouseX <= 495 && mouseY >= 5
                 && mouseY <= 30) {
             this.ampelWechsleZustand();
         }
@@ -150,56 +174,81 @@ public class Test extends PApplet {
     }
 
     public void addiereAutos(String wo, int x, int y) {
-        int anz = 0;
-        if (wo.equals("P")) {
-            anz = 100;
-            if (this.pos < anz) {
-                int zeile = this.pos / 10;
-                int spalte = this.pos % 10;
-                this.addAutoAnPosition(x, y, spalte, zeile);
-                this.pos++;
-            }
-        } else if (wo.equals("E")) {
-            anz = 10;
-            if (this.posEinfahrt < anz) {
-                int zeile = this.posEinfahrt / 10;
-                int spalte = this.posEinfahrt % 10;
-                this.addAutoAnPosition(x, y, spalte, zeile);
-                this.posEinfahrt++;
-            }
-        } else if (wo.equals("A")) {
-            anz = 10;
-            if (this.posAusfahrt < anz) {
-                int zeile = this.posAusfahrt / 10;
-                int spalte = this.posAusfahrt % 10;
-                this.addAutoAnPosition(x, y, spalte, zeile);
-                this.posAusfahrt++;
-            }
+        int anz;
+        switch (wo) {
+            case "P":
+                anz = 100;
+                if (this.pos < anz) {
+                    int zeile = this.pos / 10;
+                    int spalte = this.pos % 10;
+                    this.addAutoAnPosition(x, y, spalte, zeile);
+                    this.pos++;
+                }
+                break;
+            case "E":
+                anz = 10;
+                if (this.posEinfahrt < anz) {
+                    int zeile = this.posEinfahrt / 10;
+                    int spalte = this.posEinfahrt % 10;
+                    this.addAutoAnPosition(x, y, spalte, zeile);
+                    this.posEinfahrt++;
+                }
+                break;
+            case "A":
+                anz = 10;
+                if (this.posAusfahrt < anz) {
+                    int zeile = this.posAusfahrt / 10;
+                    int spalte = this.posAusfahrt % 10;
+                    this.addAutoAnPosition(x, y, spalte, zeile);
+                    this.posAusfahrt++;
+                }
+                break;
+            case "B":
+                anz = 4;
+                if (this.posBaustelle < anz) {
+                    int zeile = this.posBaustelle / 10;
+                    int spalte = this.posBaustelle % 10;
+                    this.addAutoAnPosition(x, y, zeile, spalte);
+                    this.posBaustelle++;
+                }
+                break;
         }
     }
 
     public void subtrahiereAutos(String wo, int x, int y) {
-        if (wo.equals("P")) {
-            if (this.pos > 0) {
-                this.pos--;
-                int zeile = this.pos / 10;
-                int spalte = this.pos % 10;
-                this.subAutoAnPosition(x, y, spalte, zeile);
-            }
-        } else if (wo.equals("E")) {
-            if (this.posEinfahrt > 0) {
-                this.posEinfahrt--;
-                int zeile = this.posEinfahrt / 10;
-                int spalte = this.posEinfahrt % 10;
-                this.subAutoAnPosition(x, y, spalte, zeile);
-            }
-        } else if (wo.equals("A")) {
-            if (this.posAusfahrt > 0) {
-                this.posAusfahrt--;
-                int zeile = this.posAusfahrt / 10;
-                int spalte = this.posAusfahrt % 10;
-                this.subAutoAnPosition(x, y, spalte, zeile);
-            }
+        switch (wo) {
+            case "P":
+                if (this.pos > 0) {
+                    this.pos--;
+                    int zeile = this.pos / 10;
+                    int spalte = this.pos % 10;
+                    this.subAutoAnPosition(x, y, spalte, zeile);
+                }
+                break;
+            case "E":
+                if (this.posEinfahrt > 0) {
+                    this.posEinfahrt--;
+                    int zeile = this.posEinfahrt / 10;
+                    int spalte = this.posEinfahrt % 10;
+                    this.subAutoAnPosition(x, y, spalte, zeile);
+                }
+                break;
+            case "A":
+                if (this.posAusfahrt > 0) {
+                    this.posAusfahrt--;
+                    int zeile = this.posAusfahrt / 10;
+                    int spalte = this.posAusfahrt % 10;
+                    this.subAutoAnPosition(x, y, spalte, zeile);
+                }
+                break;
+           case "B":
+                if (this.posBaustelle > 0) {
+                    this.posBaustelle--;
+                    int zeile = this.posBaustelle / 10;
+                    int spalte = this.posBaustelle % 10;
+                    this.subAutoAnPosition(x, y, zeile, spalte);
+                }
+                break;
         }
     }
 

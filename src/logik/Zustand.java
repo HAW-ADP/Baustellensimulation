@@ -3,248 +3,287 @@ package logik;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import logik.interfaces.Uhrzeit;
 import logik.interfaces.Warteschlange;
 import logik.interfaces.Zeitspanne;
 
-public class Zustand {
-	private final Uhrzeit zeit;
-	private final List<Uhrzeit> autoUhrzeiten;
-	private final int einfahrt;
-	private final Warteschlange baustelle;
-	private final Warteschlange parkplatz;
-	private final List<Zeitspanne> autoStandzeiten;
-	private final int ausfahrt;
-	private final Ampel ampel;
-	private final Uhrzeit letzteAmpelSchaltzeit;
-	
-	public Zustand(Uhrzeit startZeit, List<Uhrzeit> autoUhrzeiten, List<Zeitspanne> autoStandzeiten, 
-			int parkplatzMaximum, Ampel ampel) {
-		this.zeit = startZeit;
-		this.autoUhrzeiten = autoUhrzeiten;
-		this.einfahrt = 0;
-		this.baustelle = new WarteschlangeImpl(parkplatzMaximum);
-		this.parkplatz = new WarteschlangeImpl(parkplatzMaximum);
-		this.autoStandzeiten = autoStandzeiten;
-		this.ausfahrt = 0;
-		this.ampel = ampel;
-		this.letzteAmpelSchaltzeit = startZeit;
-	}
-	
-	public Zustand(Uhrzeit zeit, List<Uhrzeit> autoUhrzeiten, int einfahrt,
-			Warteschlange baustelle, Warteschlange parkplatz, List<Zeitspanne> autoStandzeiten, 
-			int ausfahrt, Ampel ampel, Uhrzeit letzteAmpelSchaltzeit) {
-		this.zeit = zeit;
-		this.autoUhrzeiten = autoUhrzeiten;
-		this.einfahrt = einfahrt;
-		this.baustelle = baustelle;
-		this.parkplatz = parkplatz;
-		this.autoStandzeiten = autoStandzeiten;
-		this.ausfahrt = ausfahrt;
-		this.ampel = ampel;
-		this.letzteAmpelSchaltzeit = letzteAmpelSchaltzeit;
-	}
-	
-	public Uhrzeit zeit() {
-		return zeit;
-	}
+public class Zustand
+{
 
-	public List<Uhrzeit> autoUhrzeiten() {
-		return autoUhrzeiten;
-	}
+    private final Simulation simulation;
+    private final Uhrzeit zeit;
+    private final Uhrzeit naechsteZeit;
+    private final int anzahlEinfahrt;
+    private final int anzahlAusfahrt;
+    private final List<Uhrzeit> ankunftzeiten;
+    private final List<Zeitspanne> standzeiten;
+    private final Warteschlange baustelle;
+    private final Warteschlange parkplatz;
+    private final Ampel ampel;
+    private final Uhrzeit letzteAmpelSchaltzeit;
 
-	public int einfahrt() {
-		return einfahrt;
-	}
+    public Zustand(Simulation simulation, Uhrzeit zeit, List<Uhrzeit> ankunftzeiten, List<Zeitspanne> standzeiten,
+            int parkplatzMaximum, Ampel ampel)
+    {
+        this.simulation = simulation;
 
-	public Warteschlange baustelle() {
-		return baustelle;
-	}
+        this.zeit = zeit;
+        this.ankunftzeiten = ankunftzeiten;
+        this.standzeiten = standzeiten;
+        this.ampel = ampel;
+        this.letzteAmpelSchaltzeit = zeit;
 
-	public Warteschlange parkplatz() {
-		return parkplatz;
-	}
+        this.anzahlEinfahrt = 0;
+        this.anzahlAusfahrt = 0;
+        this.baustelle = new WarteschlangeImpl(parkplatzMaximum);
+        this.parkplatz = new WarteschlangeImpl(parkplatzMaximum);
 
-	public List<Zeitspanne> autoStandzeiten() {
-		return autoStandzeiten;
-	}
+        this.naechsteZeit = this.naechsteZeit();
+    }
 
-	public int ausfahrt() {
-		return ausfahrt;
-	}
+    public Zustand(Simulation simulation, Uhrzeit zeit, List<Uhrzeit> ankunftzeiten, List<Zeitspanne> standzeiten,
+            Warteschlange baustelle, Warteschlange parkplatz, int anzahlEinfahrt, int anzahlAusfahrt,
+            Ampel ampel, Uhrzeit letzteAmpelSchaltzeit)
+    {
+        this.simulation = simulation;
 
-	public Ampel ampel() {
-		return ampel;
-	}
+        this.zeit = zeit;
+        this.ankunftzeiten = ankunftzeiten;
+        this.standzeiten = standzeiten;
+        this.anzahlEinfahrt = anzahlEinfahrt;
+        this.anzahlAusfahrt = anzahlAusfahrt;
+        this.baustelle = baustelle;
+        this.parkplatz = parkplatz;
+        this.ampel = ampel;
+        this.letzteAmpelSchaltzeit = letzteAmpelSchaltzeit;
 
-	public Uhrzeit letzteAmpelSchaltzeit() {
-		return letzteAmpelSchaltzeit;
-	}
+        this.naechsteZeit = this.naechsteZeit();
+    }
 
-	@Override
-	public String toString() {
-		return "Zustand "+zeit+": STR "+autoUhrzeiten.size()+" | EIN "+einfahrt+" | BAU "+
-			baustelle.laenge()+" | PAR "+parkplatz.laenge()+" [STA "+ autoStandzeiten.size()+
-			"] | AUS "+ausfahrt+" || "+ampel;
-	}
-	
-	public static Zustand naechsterZustand(Zustand alterZustand, Zeitspanne baustellenZeit,
-			Zeitspanne autoAbstand, int strassenFassungsvermoegen, Zeitspanne minimaleAmpelSchaltzeit) {
-		
-			Uhrzeit naechsteZeit = naechsteZeit(alterZustand, baustellenZeit, autoAbstand, strassenFassungsvermoegen, minimaleAmpelSchaltzeit);
-			// nix passiert?
-			if (alterZustand.zeit == naechsteZeit) return alterZustand;
-			
-			List<Uhrzeit> naechsteAutoUhrzeiten = naechsteAutoUhrzeiten(alterZustand, naechsteZeit, strassenFassungsvermoegen);
-			int naechsteEinfahrt = naechsteEinfahrt(alterZustand, naechsteZeit, autoAbstand, strassenFassungsvermoegen);
-			Warteschlange naechsteBaustelle = naechsteBaustelle(alterZustand, naechsteZeit, autoAbstand, baustellenZeit);
-			Warteschlange naechsterParkplatz = naechsterParkplatz(alterZustand, naechsteZeit, baustellenZeit, strassenFassungsvermoegen);
-			List<Zeitspanne> naechsteAutoStandzeiten = naechsteAutoStandzeiten(alterZustand, naechsteZeit, naechsterParkplatz, baustellenZeit, strassenFassungsvermoegen);
-			int naechsteAusfahrt = naechsteAusfahrt(alterZustand, naechsteZeit, autoAbstand, strassenFassungsvermoegen);
-			Ampel naechsteAmpel = naechsteAmpel(alterZustand, naechsteZeit, minimaleAmpelSchaltzeit);
-			Uhrzeit naechsteAmpelSchaltzeit = naechsteAmpelSchaltzeit(alterZustand, naechsteZeit, naechsteAmpel);
-		
-		return new Zustand(naechsteZeit, naechsteAutoUhrzeiten, naechsteEinfahrt, naechsteBaustelle,
-				naechsterParkplatz, naechsteAutoStandzeiten, naechsteAusfahrt, naechsteAmpel,
-				naechsteAmpelSchaltzeit);
-	}
+    public Uhrzeit zeit()
+    {
+        return zeit;
+    }
 
-	private static Uhrzeit naechsteZeit(Zustand alterZustand, Zeitspanne baustellenZeit,
-			Zeitspanne autoAbstand, int strassenFassungsvermoegen, Zeitspanne minimaleAmpelSchaltzeit) {
-		List<Uhrzeit> zeiten = new ArrayList<Uhrzeit>();
-		
-		// auf die Einfahrt? Einfahrt voll?
-		if (alterZustand.autoUhrzeiten.size() > 0 && alterZustand.einfahrt < strassenFassungsvermoegen)
-			zeiten.add(alterZustand.autoUhrzeiten.get(0));
-		
-		// auf die Baustelle? Ampel gr�n? Letztes Auto in der Baustelle >= 3s weg?
-		if (alterZustand.einfahrt > 0 && alterZustand.ampel == Ampel.EINFAHRT && (alterZustand.baustelle.laenge() == 0 ||
-				alterZustand.baustelle.letzter().addiere(autoAbstand).compareTo(alterZustand.zeit) > -1))
-			zeiten.add(alterZustand.zeit.addiere(ZeitspanneImpl.NAECHSTE_ZEITEINHEIT));			
-		
-		// auf den Parkplatz? 
-		if (alterZustand.baustelle.laenge() > 0)
-			zeiten.add(alterZustand.baustelle.naechster().addiere(baustellenZeit));
-		
-		// auf die Ausfahrt? Ausfahrt voll?
-		if (alterZustand.parkplatz.laenge() > 0 && alterZustand.ausfahrt < strassenFassungsvermoegen) 
-			zeiten.add(alterZustand.parkplatz.naechster());
-		
-		// auf die Baustelle? Ampel gr�n? Letztes Auto in der Baustelle >= 3s weg?
-		if (alterZustand.ausfahrt > 0 && alterZustand.ampel == Ampel.AUSFAHRT && (alterZustand.baustelle.laenge() == 0 ||
-				alterZustand.baustelle.letzter().addiere(autoAbstand).compareTo(alterZustand.zeit) > -1))
-			zeiten.add(alterZustand.zeit.addiere(ZeitspanneImpl.NAECHSTE_ZEITEINHEIT));		
-		
-		// Autos auf der Ein/Ausfahrt und Ampel auf Stopp?
-		if ((alterZustand.einfahrt > 0 || alterZustand.ausfahrt > 0) && (alterZustand.ampel == Ampel.STOP_EINFAHRT ||
-				alterZustand.ampel == Ampel.STOP_AUSFAHRT) && alterZustand.baustelle.laenge() == 0)
-			zeiten.add(alterZustand.letzteAmpelSchaltzeit.addiere(minimaleAmpelSchaltzeit));
-		
-		// sortieren
-		Collections.sort(zeiten);
-		return (zeiten.size() > 0 ? zeiten.get(0) : alterZustand.zeit);
-	}
-	
-	private static List<Uhrzeit> naechsteAutoUhrzeiten(Zustand alterZustand, Uhrzeit naechsteZeit, int strassenFassungsvermoegen) {
-		if (alterZustand.autoUhrzeiten.contains(naechsteZeit) && alterZustand.einfahrt < strassenFassungsvermoegen) {
-			List<Uhrzeit> zeiten = new ArrayList<Uhrzeit>();
-			zeiten.addAll(alterZustand.autoUhrzeiten);
-			zeiten.remove(naechsteZeit);
-			return zeiten;
-		}		
-		return alterZustand.autoUhrzeiten;
-	}
-	
-	private static int naechsteEinfahrt(Zustand alterZustand, Uhrzeit naechsteZeit, Zeitspanne autoAbstand, int strassenFassungsvermoegen) {
-		int einfahrt = alterZustand.einfahrt;
-		
-		// Stra�e -> Einfahrt
-		if (alterZustand.autoUhrzeiten.contains(naechsteZeit) && alterZustand.einfahrt < strassenFassungsvermoegen) einfahrt++;
-		// Einfahrt -> Baustelle
-		if (alterZustand.zeit.addiere(ZeitspanneImpl.NAECHSTE_ZEITEINHEIT).compareTo(naechsteZeit) == 0 && (alterZustand.baustelle.laenge() == 0 ||
-				alterZustand.baustelle.letzter().addiere(autoAbstand).compareTo(naechsteZeit) > -1) && 
-					alterZustand.ampel == Ampel.EINFAHRT && alterZustand.einfahrt > 0)	
-			einfahrt--;
-		
-		return einfahrt;
-	}
+    public int anzahlEinfahrt()
+    {
+        return anzahlEinfahrt;
+    }
 
-	private static Warteschlange naechsteBaustelle(Zustand alterZustand, Uhrzeit naechsteZeit, Zeitspanne autoAbstand, Zeitspanne baustellenZeit) {
-		Warteschlange baustelle = alterZustand.baustelle;
-		
-		// Einfahrt/Ausfahrt -> Baustelle
-		if (alterZustand.zeit.addiere(ZeitspanneImpl.NAECHSTE_ZEITEINHEIT).compareTo(naechsteZeit) == 0 &&
-			(alterZustand.baustelle.laenge() == 0 || alterZustand.baustelle.letzter().addiere(autoAbstand).compareTo(naechsteZeit) > -1) && 
-				(alterZustand.ampel == Ampel.EINFAHRT && alterZustand.einfahrt > 0) ||
-					(alterZustand.ampel == Ampel.AUSFAHRT && alterZustand.ausfahrt > 0)) {		
-			baustelle = baustelle.hinzufuegen(naechsteZeit);
-		}
-		
-		// Baustelle -> Parkplatz/Strasse
-		if (alterZustand.baustelle.laenge() > 0 && alterZustand.baustelle.naechster().addiere(baustellenZeit).compareTo(naechsteZeit) < 1) {
-			baustelle = baustelle.entfernen();
-		}
-		
-		return baustelle;
-	}
+    public int anzahlAusfahrt()
+    {
+        return anzahlAusfahrt;
+    }
 
-	private static Warteschlange naechsterParkplatz(Zustand alterZustand, Uhrzeit naechsteZeit, Zeitspanne baustellenZeit, int strassenFassungsvermoegen) {
-		Warteschlange parkplatz = alterZustand.parkplatz;
-		
-		// Baustelle -> Parkplatz
-		if (alterZustand.baustelle.laenge() > 0 && (alterZustand.ampel == Ampel.EINFAHRT || alterZustand.ampel == Ampel.STOP_AUSFAHRT) &&
-				alterZustand.baustelle.naechster().addiere(baustellenZeit).compareTo(naechsteZeit) == 0) {
-			parkplatz = parkplatz.hinzufuegen(naechsteZeit.addiere(alterZustand.autoStandzeiten.get(0)));
-		}
-		
-		// Parkplatz -> Ausfahrt
-		if (alterZustand.parkplatz.laenge() > 0 && alterZustand.parkplatz.naechster().compareTo(naechsteZeit) == 0 &&
-				alterZustand.ausfahrt < strassenFassungsvermoegen) {
-			parkplatz = parkplatz.entfernen();
-		}
-		
-		return parkplatz;
-	}
+    public Uhrzeit letzteAmpelSchaltzeit()
+    {
+        return letzteAmpelSchaltzeit;
+    }
 
-	private static List<Zeitspanne> naechsteAutoStandzeiten(Zustand alterZustand, Uhrzeit naechsteZeit, Warteschlange naechsterParkplatz, Zeitspanne baustellenZeit,
-			int strassenFassungsvermoegen) {
-		if (alterZustand.baustelle.laenge() > 0 && (alterZustand.ampel == Ampel.EINFAHRT || alterZustand.ampel == Ampel.STOP_AUSFAHRT) && 
-				alterZustand.baustelle.naechster().addiere(baustellenZeit).compareTo(naechsteZeit) == 0) {
-			List<Zeitspanne> zeiten = new ArrayList<Zeitspanne>();
-			zeiten.addAll(alterZustand.autoStandzeiten);
-			zeiten.remove(0);
-			return zeiten;
-		}
-		return alterZustand.autoStandzeiten;
-	}
+    @Override
+    public String toString()
+    {
+        return String.format("Zustand %s : STR %d | EIN %d | BAU %d | PAR %d [STA %d] | AUS %d || %s",
+                zeit, ankunftzeiten.size(), anzahlEinfahrt, baustelle.laenge(),
+                parkplatz.laenge(), standzeiten.size(), anzahlAusfahrt, ampel);
+    }
 
-	private static int naechsteAusfahrt(Zustand alterZustand, Uhrzeit naechsteZeit, Zeitspanne autoAbstand, int strassenFassungsvermoegen) {
-		int ausfahrt = alterZustand.ausfahrt;
-		
-		// Parkplatz -> Ausfahrt
-		if (alterZustand.parkplatz.laenge() > 0 && alterZustand.parkplatz.naechster().compareTo(naechsteZeit) == 0 &&
-				alterZustand.ausfahrt < strassenFassungsvermoegen) ausfahrt++;
-		
-		// Ausfahrt -> Baustelle
-		if (alterZustand.zeit.addiere(ZeitspanneImpl.NAECHSTE_ZEITEINHEIT).compareTo(naechsteZeit) == 0 &&
-				(alterZustand.baustelle.laenge() == 0 || alterZustand.baustelle.letzter().addiere(autoAbstand).compareTo(naechsteZeit) > -1) && 
-				(alterZustand.ampel == Ampel.AUSFAHRT || alterZustand.ampel == Ampel.STOP_EINFAHRT) && alterZustand.ausfahrt > 0) {
-						
-				ausfahrt--;
-		}
-		
-		return ausfahrt;
-	}
+    public Zustand naechsterZustand()
+    {
+        // nichts passiert?
+        if (this.zeit == this.naechsteZeit)
+        {
+            return this;
+        }
 
-	private static Ampel naechsteAmpel(Zustand alterZustand, Uhrzeit naechsteZeit, Zeitspanne minimaleAmpelSchaltzeit) {
-		return Ampel.naechsteAmpel(alterZustand.ampel, alterZustand.einfahrt,
-				 alterZustand.baustelle.laenge(),  alterZustand.parkplatz.laenge(), 
-				 alterZustand.parkplatz.maximaleElemente(),  alterZustand.ausfahrt,
-				 alterZustand.letzteAmpelSchaltzeit, naechsteZeit, minimaleAmpelSchaltzeit);
-	}
+        Warteschlange naechsteBaustelle = this.naechsteBaustelle();
+        Warteschlange naechsterParkplatz = naechsterParkplatz();
 
-	private static Uhrzeit naechsteAmpelSchaltzeit(Zustand alterZustand, Uhrzeit naechsteZeit, Ampel naechsteAmpel) {
-		return (alterZustand.ampel == naechsteAmpel ? alterZustand.letzteAmpelSchaltzeit : naechsteZeit);
-	}
+        List<Uhrzeit> naechsteAnkunftzeiten = this.naechsteAnkunftzeiten();
+        List<Zeitspanne> naechsteStandzeiten = this.naechsteStandzeiten();
+
+        int naechsteAnzahlEinfahrt = this.naechsteAnzahlEinfahrt();
+        int naechsteAnzahlAusfahrt = this.naechsteAnzahlAusfahrt();
+
+        Ampel naechsteAmpel = this.naechsteAmpel();
+        Uhrzeit naechsteAmpelSchaltzeit = this.naechsteAmpelSchaltzeit();
+
+        return new Zustand(simulation, naechsteZeit, naechsteAnkunftzeiten, naechsteStandzeiten,
+                naechsteBaustelle, naechsterParkplatz, naechsteAnzahlEinfahrt, naechsteAnzahlAusfahrt,
+                naechsteAmpel, naechsteAmpelSchaltzeit);
+    }
+
+    private Uhrzeit naechsteZeit()
+    {
+        List<Uhrzeit> zeiten = new ArrayList<Uhrzeit>();
+
+        // auf die Einfahrt? Einfahrt voll?
+        if (this.ankunftzeiten.size() > 0 && this.anzahlEinfahrt < simulation.strassenFassungsvermoegen())
+        {
+            zeiten.add(this.ankunftzeiten.get(0));
+        }
+
+        // auf die Baustelle? Ampel grün? Letztes Auto in der Baustelle >= 3s weg?
+        if (this.anzahlEinfahrt > 0 && this.ampel == Ampel.EINFAHRT && (this.baustelle.laenge() == 0
+                || this.baustelle.letzter().addiere(simulation.autoAbstand()).compareTo(this.zeit) > -1))
+        {
+            zeiten.add(this.zeit.addiere(ZeitspanneImpl.NAECHSTE_ZEITEINHEIT));
+        }
+
+        // auf den Parkplatz? 
+        if (this.baustelle.laenge() > 0)
+        {
+            zeiten.add(this.baustelle.naechster().addiere(simulation.baustellenZeit()));
+        }
+
+        // auf die Ausfahrt? Ausfahrt voll?
+        if (this.parkplatz.laenge() > 0 && this.anzahlAusfahrt < simulation.strassenFassungsvermoegen())
+        {
+            zeiten.add(this.parkplatz.naechster());
+        }
+
+        // auf die Baustelle? Ampel gr�n? Letztes Auto in der Baustelle >= 3s weg?
+        if (this.anzahlAusfahrt > 0 && this.ampel == Ampel.AUSFAHRT && (this.baustelle.laenge() == 0
+                || this.baustelle.letzter().addiere(simulation.autoAbstand()).compareTo(this.zeit) > -1))
+        {
+            zeiten.add(this.zeit.addiere(ZeitspanneImpl.NAECHSTE_ZEITEINHEIT));
+        }
+
+        // Autos auf der Ein/Ausfahrt und Ampel auf Stopp?
+        if ((this.anzahlEinfahrt > 0 || this.anzahlAusfahrt > 0) && (this.ampel == Ampel.STOP_EINFAHRT
+                || this.ampel == Ampel.STOP_AUSFAHRT) && this.baustelle.laenge() == 0)
+        {
+            zeiten.add(this.letzteAmpelSchaltzeit.addiere(simulation.minimaleAmpelSchaltzeit()));
+        }
+
+        Collections.sort(zeiten);
+        return (zeiten.size() > 0 ? zeiten.get(0) : this.zeit);
+    }
+
+    private List<Uhrzeit> naechsteAnkunftzeiten()
+    {
+        if (this.ankunftzeiten.contains(naechsteZeit) && this.anzahlEinfahrt < simulation.strassenFassungsvermoegen())
+        {
+            List<Uhrzeit> zeiten = new ArrayList<Uhrzeit>();
+            zeiten.addAll(this.ankunftzeiten);
+            zeiten.remove(naechsteZeit);
+            return zeiten;
+        }
+
+        return this.ankunftzeiten;
+    }
+
+    private int naechsteAnzahlEinfahrt()
+    {
+        int einfahrt = this.anzahlEinfahrt;
+
+        // Straße -> Einfahrt
+        if (this.ankunftzeiten.contains(naechsteZeit) && this.anzahlEinfahrt < simulation.strassenFassungsvermoegen())
+        {
+            einfahrt++;
+        }
+
+        // Einfahrt -> Baustelle
+        if (this.zeit.addiere(ZeitspanneImpl.NAECHSTE_ZEITEINHEIT).compareTo(naechsteZeit) == 0 && (this.baustelle.laenge() == 0
+                || this.baustelle.letzter().addiere(simulation.autoAbstand()).compareTo(naechsteZeit) > -1)
+                && this.ampel == Ampel.EINFAHRT && this.anzahlEinfahrt > 0)
+        {
+            einfahrt--;
+        }
+
+        return einfahrt;
+    }
+
+    private Warteschlange naechsteBaustelle()
+    {
+        Warteschlange naechsteBaustelle = this.baustelle;
+
+        // Einfahrt/Ausfahrt -> Baustelle
+        if (this.zeit.addiere(ZeitspanneImpl.NAECHSTE_ZEITEINHEIT).compareTo(naechsteZeit) == 0
+                && (this.baustelle.laenge() == 0 || this.baustelle.letzter().addiere(simulation.autoAbstand()).compareTo(naechsteZeit) > -1)
+                && (this.ampel == Ampel.EINFAHRT && this.anzahlEinfahrt > 0)
+                || (this.ampel == Ampel.AUSFAHRT && this.anzahlAusfahrt > 0))
+        {
+            naechsteBaustelle = baustelle.hinzufuegen(naechsteZeit);
+        }
+
+        // Baustelle -> Parkplatz/Strasse
+        if (this.baustelle.laenge() > 0 && this.baustelle.naechster().addiere(simulation.baustellenZeit()).compareTo(naechsteZeit) < 1)
+        {
+            naechsteBaustelle = baustelle.entfernen();
+        }
+
+        return naechsteBaustelle;
+    }
+
+    private Warteschlange naechsterParkplatz()
+    {
+        Warteschlange naechsterParkplatz = this.parkplatz;
+
+        // Baustelle -> Parkplatz
+        if (this.baustelle.laenge() > 0 && (this.ampel == Ampel.EINFAHRT || this.ampel == Ampel.STOP_AUSFAHRT)
+                && this.baustelle.naechster().addiere(simulation.baustellenZeit()).compareTo(naechsteZeit) == 0)
+        {
+            naechsterParkplatz = parkplatz.hinzufuegen(naechsteZeit.addiere(this.standzeiten.get(0)));
+        }
+
+        // Parkplatz -> Ausfahrt
+        if (this.parkplatz.laenge() > 0 && this.parkplatz.naechster().compareTo(naechsteZeit) == 0
+                && this.anzahlAusfahrt < simulation.strassenFassungsvermoegen())
+        {
+            naechsterParkplatz = parkplatz.entfernen();
+        }
+
+        return naechsterParkplatz;
+    }
+
+    private List<Zeitspanne> naechsteStandzeiten()
+    {
+        if (this.baustelle.laenge() > 0 && (this.ampel == Ampel.EINFAHRT || this.ampel == Ampel.STOP_AUSFAHRT)
+                && this.baustelle.naechster().addiere(simulation.baustellenZeit()).compareTo(naechsteZeit) == 0)
+        {
+            List<Zeitspanne> zeiten = new ArrayList<Zeitspanne>();
+            zeiten.addAll(this.standzeiten);
+            zeiten.remove(0);
+            return zeiten;
+        }
+
+        return this.standzeiten;
+    }
+
+    private int naechsteAnzahlAusfahrt()
+    {
+        int naechsteAnzahlAusfahrt = this.anzahlAusfahrt;
+
+        // Parkplatz -> Ausfahrt
+        if (this.parkplatz.laenge() > 0 && this.parkplatz.naechster().compareTo(naechsteZeit) == 0
+                && this.anzahlAusfahrt < simulation.strassenFassungsvermoegen())
+        {
+            naechsteAnzahlAusfahrt++;
+        }
+
+        // Ausfahrt -> Baustelle
+        if (this.zeit.addiere(ZeitspanneImpl.NAECHSTE_ZEITEINHEIT).compareTo(naechsteZeit) == 0
+                && (this.baustelle.laenge() == 0 || this.baustelle.letzter().addiere(simulation.autoAbstand()).compareTo(naechsteZeit) > -1)
+                && (this.ampel == Ampel.AUSFAHRT || this.ampel == Ampel.STOP_EINFAHRT) && this.anzahlAusfahrt > 0)
+        {
+
+            naechsteAnzahlAusfahrt--;
+        }
+
+        return naechsteAnzahlAusfahrt;
+    }
+
+    private Ampel naechsteAmpel()
+    {
+        return Ampel.naechsteAmpel(this.ampel, this.anzahlEinfahrt,
+                this.baustelle.laenge(), this.parkplatz.laenge(),
+                this.parkplatz.maximaleElemente(), this.anzahlAusfahrt,
+                this.letzteAmpelSchaltzeit, naechsteZeit, simulation.minimaleAmpelSchaltzeit());
+    }
+
+    private Uhrzeit naechsteAmpelSchaltzeit()
+    {
+        return (this.ampel == this.naechsteAmpel() ? this.letzteAmpelSchaltzeit : naechsteZeit);
+    }
 }

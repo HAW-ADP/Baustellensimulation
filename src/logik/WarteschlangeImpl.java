@@ -3,7 +3,6 @@ package logik;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import logik.interfaces.Uhrzeit;
 import logik.interfaces.Warteschlange;
 import logik.interfaces.Zeitspanne;
@@ -21,6 +20,7 @@ public class WarteschlangeImpl implements Warteschlange {
         this.wertListe.addAll(liste);
     }
     
+    @Override
     public Warteschlange hinzufuegen(Uhrzeit wert) {
     	if (istVoll()) return this;
     	
@@ -30,6 +30,7 @@ public class WarteschlangeImpl implements Warteschlange {
         return new WarteschlangeImpl(this.maximaleElemente, liste);
     }
    
+    @Override
     public Warteschlange entfernen() {
     	if (istLeer()) return this;
     	
@@ -38,6 +39,7 @@ public class WarteschlangeImpl implements Warteschlange {
         return new WarteschlangeImpl(this.maximaleElemente, liste);
     }
    
+    @Override
 	public Warteschlange schiebeUmZeit(Zeitspanne zeit) {
 		if (istLeer()) return this;
 		
@@ -46,6 +48,7 @@ public class WarteschlangeImpl implements Warteschlange {
         return new WarteschlangeImpl(this.maximaleElemente, liste);
 	}
     
+    @Override
 	public Warteschlange sortieren() {
 		 List<Uhrzeit> liste = new ArrayList<Uhrzeit>();
 		 liste.addAll(wertListe);
@@ -54,26 +57,32 @@ public class WarteschlangeImpl implements Warteschlange {
 		 return new WarteschlangeImpl(this.maximaleElemente, liste);
 	}
 	
+    @Override
     public boolean istLeer() {
         return wertListe.isEmpty();
     }
    
+    @Override
     public boolean istVoll() {
         return laenge() == maximaleElemente;
     }
     
+    @Override
     public int laenge() {
     	return wertListe.size();
     }
     
+    @Override
     public int maximaleElemente() {
     	return maximaleElemente;
     }
     
+    @Override
     public Uhrzeit letzter() {
         return (laenge() > 0 ? wertListe.get(laenge()-1) : null);
     }
     
+    @Override
     public Uhrzeit naechster() {
         return (laenge() > 0 ? wertListe.get(0) : null);
     }

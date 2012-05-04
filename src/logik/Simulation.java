@@ -25,8 +25,24 @@ public class Simulation implements Iterable<Zustand>
         this.strassenFassungsvermoegen = strassenFassungsvermoegen;
         this.minimaleAmpelSchaltzeit = minimaleAmpelSchaltzeit;
 
-        this.startZustand = new Zustand(startZeit, autoUhrzeiten, autoStandzeiten, parkplatzMaximum, startAmpel);
+        this.startZustand = new Zustand(this, startZeit, autoUhrzeiten, autoStandzeiten, parkplatzMaximum, startAmpel);
         this.zustandsHistorie = new ArrayList<Zustand>();
+    }
+    
+    public Zeitspanne baustellenZeit(){
+        return this.baustellenZeit;
+    }
+    
+    public Zeitspanne autoAbstand(){
+        return this.autoAbstand;
+    }
+    
+    public Zeitspanne minimaleAmpelSchaltzeit() {
+        return this.minimaleAmpelSchaltzeit;
+    }
+    
+    public int strassenFassungsvermoegen() {
+        return this.strassenFassungsvermoegen;
     }
 
     @Override
@@ -47,8 +63,7 @@ public class Simulation implements Iterable<Zustand>
             }
 
             Zustand current = zustandsHistorie.get(zustandsHistorie.size() - 1);
-            Zustand next = Zustand.naechsterZustand(current,
-                    baustellenZeit, autoAbstand, strassenFassungsvermoegen, minimaleAmpelSchaltzeit);
+            Zustand next = current.naechsterZustand();
 
             return current != next;
         }
@@ -56,9 +71,17 @@ public class Simulation implements Iterable<Zustand>
         @Override
         public Zustand next()
         {
-            Zustand current = zustandsHistorie.get(zustandsHistorie.size() - 1);
-            Zustand next = Zustand.naechsterZustand(current,
-                    baustellenZeit, autoAbstand, strassenFassungsvermoegen, minimaleAmpelSchaltzeit);
+            Zustand next;
+            if (zustandsHistorie.isEmpty())
+            {
+                next = startZustand;
+            }
+            else
+            {
+                Zustand current = zustandsHistorie.get(zustandsHistorie.size() - 1);
+                next = current.naechsterZustand();
+            }
+
             zustandsHistorie.add(next);
             return next;
         }

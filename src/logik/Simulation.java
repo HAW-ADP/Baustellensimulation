@@ -28,20 +28,24 @@ public class Simulation implements Iterable<Zustand>
         this.startZustand = new Zustand(this, startZeit, autoUhrzeiten, autoStandzeiten, parkplatzMaximum, startAmpel);
         this.zustandsHistorie = new ArrayList<Zustand>();
     }
-    
-    public Zeitspanne baustellenZeit(){
+
+    public Zeitspanne baustellenZeit()
+    {
         return this.baustellenZeit;
     }
-    
-    public Zeitspanne autoAbstand(){
+
+    public Zeitspanne autoAbstand()
+    {
         return this.autoAbstand;
     }
-    
-    public Zeitspanne minimaleAmpelSchaltzeit() {
+
+    public Zeitspanne minimaleAmpelSchaltzeit()
+    {
         return this.minimaleAmpelSchaltzeit;
     }
-    
-    public int strassenFassungsvermoegen() {
+
+    public int strassenFassungsvermoegen()
+    {
         return this.strassenFassungsvermoegen;
     }
 

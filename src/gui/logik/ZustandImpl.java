@@ -102,8 +102,6 @@ public class ZustandImpl implements Zustand {
 			neueUhrzeitListeBaustelle.add(uhrzeit.addiere(baustellenPassierZeit).addiere(autoAbstandzeit));
 			neueLetzteBaustellenEinfahrt = uhrzeit;
 			neueUhrzeit = uhrzeit.addiere(autoAbstandzeit);
-			System.out.println("Neue Uhrzeit: " + neueUhrzeit);
-			System.out.println("baustellen-if");
 			
 		
 		/** Auto faehrt von Ausfahrt in Baustelle */
@@ -112,8 +110,6 @@ public class ZustandImpl implements Zustand {
 			neueUhrzeitListeBaustelle.add(uhrzeit.addiere(baustellenPassierZeit).addiere(autoAbstandzeit));
 			neueLetzteBaustellenEinfahrt = uhrzeit;
 			neueUhrzeit = uhrzeit.addiere(autoAbstandzeit);
-			System.out.println("Neue Uhrzeit: " + neueUhrzeit);
-			System.out.println("baustellen-if");
 		}
 		
 		/** Autos verlassen Baustelle in beide Richtungen */
@@ -151,8 +147,8 @@ public class ZustandImpl implements Zustand {
 		
 	}
 	
-	/** Gibt je nach der Simulationssituation EINFAHRT, AUSFAHRT, STOP_EINFAHRT oder STOP_AUSFAHRT zurueck
-	 *  sowie die Dauer dieses naechsten Zustands */
+	/** Gibt je nach der Simulationssituation EINFAHRT, AUSFAHRT, STOP_EINFAHRT, STOP_AUSFAHRT
+	 * oder STOP_BEIDE zurueck */
 	//TODO: Ampelalgorithmus
 	private int naechsterAmpelzustand(){
 		
@@ -165,7 +161,8 @@ public class ZustandImpl implements Zustand {
 		}
 	}
 	
-	//TODO: Ampelschaltdauer-Algorithmus
+	/** Gibt die Dauer der naechsten Ampelschaltung zurueck */
+	//TODO: Ampelschaltdauer-Algorithmus(gehort zum Ampelalgorithmus)
 	private Uhrzeit naechsteAmpelzustandZeit(int neuerAmpelzustand, Uhrzeit neueUhrzeit){
 		switch(neuerAmpelzustand){
 			case(Zustand.EINFAHRT): return neueUhrzeit.addiere(maximaleRotPhase);

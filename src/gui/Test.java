@@ -30,11 +30,11 @@ public class Test extends PApplet {
     final private int AUSFAHRTAMPELX = 90;
     final private int AUSFAHRTAMPELY = 240;
     // Fixe Größen
-    final private int BAUSTELLEKAPAZITAET = 3;
+    final private int BAUSTELLEKAPAZITAET = 6;
     final private int PARKHAUSZEILEKAPAZITAET = 20;
     final private int PARKHAUSSPALTEKAPAZITAET = 10;
-    final private int EINFAHRTKAPAZITAET = 5;
-    final private int AUSFAHRTKAPAZITAET = 7;
+    final private int EINFAHRTKAPAZITAET = 10;
+    final private int AUSFAHRTKAPAZITAET = 10;
     private PImage welt = loadImage("src\\gui\\img\\welt.jpg");
     private PImage weltUnten = loadImage("src\\gui\\img\\weltUnten.jpg");
     private PImage auto1 = loadImage("src\\gui\\img\\auto1.jpg");
@@ -52,9 +52,8 @@ public class Test extends PApplet {
     Uhrzeit baustellenZeit = new UhrzeitImpl(20);
     Uhrzeit minParkDauer = new UhrzeitImpl(0, 30, 0);
     Uhrzeit maxParkDauer = new UhrzeitImpl(1, 0, 0);
-    int parkplatzKapazitaet = 100;
-    int einfahrtKapazitaet = 10;
     Uhrzeit maxRot = new UhrzeitImpl(0, 2, 0);
+    
     Zustand zustand = new ZustandImpl(0, 0, Zustand.STOP_AUSFAHRT, naechstesAutoEinfahrt,
             startzeit, new PriorityQueue<Uhrzeit>(), new PriorityQueue<Uhrzeit>(),
             naechstesAutoEinfahrt, new UhrzeitImpl(0, 0, 0), autoAbstand, baustellenZeit,
@@ -184,21 +183,29 @@ public class Test extends PApplet {
     private void updateWartebereiche() {
         if (posEinfahrt < zustand.getEinfahrtAutos()) {
             addiereAutos("E");
-        } else if (posEinfahrt > zustand.getEinfahrtAutos()) {
+        } 
+        if (posEinfahrt > zustand.getEinfahrtAutos()) {
             subtrahiereAutos("E");
-        } else if (posAusfahrt < zustand.getAusfahrtAutos()) {
+        } 
+        if (posAusfahrt < zustand.getAusfahrtAutos()) {
             addiereAutos("A");
-        } else if (posAusfahrt > zustand.getAusfahrtAutos()) {
+        } 
+        if (posAusfahrt > zustand.getAusfahrtAutos()) {
             subtrahiereAutos("A");
-        } else if (posBaustelle < zustand.getBaustellenAutos()) {
+        } 
+        if (posBaustelle < zustand.getBaustellenAutos()) {
             addiereAutos("B");
-        } else if (posBaustelle > zustand.getBaustellenAutos()) {
+        }
+        if (posBaustelle > zustand.getBaustellenAutos()) {
             subtrahiereAutos("B");
-        } else if (posParkplatz < zustand.getParkplatzAutos()) {
+        } 
+        if (posParkplatz < zustand.getParkplatzAutos()) {
             addiereAutos("P");
-        } else if (posParkplatz > zustand.getParkplatzAutos()) {
+        } 
+        if (posParkplatz > zustand.getParkplatzAutos()) {
             subtrahiereAutos("P");
         }
+        System.out.println(zustand);
     }
 
     private void addiereAutos(String wo) {

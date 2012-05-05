@@ -41,10 +41,6 @@ public class Test extends PApplet {
     private int posEinfahrt = 0;
     private int posAusfahrt = 0;
     private int posBaustelle = 0;
-    private int stepsParkhaus = 0;
-    private int stepsEinfahrt = 0;
-    private int stepsAusfahrt = 0;
-    private int stepsBaustelle = 0;
     private String ampelEinfahrt = "R";
     private String ampelAusfahrt = "R";
     private int ampelZustand = 1;
@@ -100,19 +96,6 @@ public class Test extends PApplet {
         zeichneAmpel(AUSFAHRTAMPELX, AUSFAHRTAMPELY, ampelAusfahrt);
         bewegeDemoAuto();
         // addiere Auto
-        if (this.stepsParkhaus > 0) {
-            this.addiereAutos("P", PARKHAUSX, PARKHAUSY);
-            this.stepsParkhaus--;
-        } else if (this.stepsEinfahrt > 0) {
-            this.addiereAutos("A", EINFAHRTWARTEBEREICHX, EINFAHRTWARTEBEREICHY);
-            this.stepsEinfahrt--;
-        } else if (this.stepsAusfahrt > 0) {
-            this.addiereAutos("E", AUSFAHRTWARTEBEREICHX, AUSFAHRTWARTEBEREICHY);
-            this.stepsAusfahrt--;
-        } else if (this.stepsBaustelle > 0) {
-            this.addiereAutos("B", BAUSTELLENBEREICHX, BAUSTELLENBEREICHY);
-            this.stepsBaustelle--;
-        }
     }
 
     private void zeichneAmpel(int x, int y, String farbe) {
@@ -127,64 +110,30 @@ public class Test extends PApplet {
         ellipse(x, y, 10, 10);
     }
 
-    public void simulation(String wo) {
-        switch (wo) {
-            case "P+":
-                this.addiereAutos("P", PARKHAUSX, PARKHAUSY);
-                break;
-            case "P-":
-                this.subtrahiereAutos("P", PARKHAUSX, PARKHAUSY);
-                break;
-            case "E+":
-                this.addiereAutos("E", EINFAHRTWARTEBEREICHX, EINFAHRTWARTEBEREICHY);
-                break;
-            case "E-":
-                this.subtrahiereAutos("E", EINFAHRTWARTEBEREICHX, EINFAHRTWARTEBEREICHY);
-                break;
-            case "A+":
-                this.addiereAutos("A", AUSFAHRTWARTEBEREICHX, AUSFAHRTWARTEBEREICHY);
-                break;
-            case "A-":
-                this.subtrahiereAutos("A", AUSFAHRTWARTEBEREICHX, AUSFAHRTWARTEBEREICHY);
-                break;
-            case "B+":
-                this.addiereAutos("B", BAUSTELLENBEREICHX, BAUSTELLENBEREICHY);
-                break;
-            case "B-":
-                this.subtrahiereAutos("B", BAUSTELLENBEREICHX, BAUSTELLENBEREICHY);
-                break;
-            case "AMPEL":
-                this.ampelWechsleZustand();
-                break;
-        }
-    }
-
     @Override
     public void mouseReleased() {
         if (mouseX >= 5 && mouseX <= 55 && mouseY >= 5 && mouseY <= 30) {
-            this.addiereAutos("P", PARKHAUSX, PARKHAUSY);
+            this.addiereAutos("P");
         } else if (mouseX >= 60 && mouseX <= 110 && mouseY >= 5 && mouseY <= 30) {
-            this.subtrahiereAutos("P", PARKHAUSX, PARKHAUSY);
+            this.subtrahiereAutos("P");
         } else if (mouseX >= 115 && mouseX <= 165 && mouseY >= 5
                 && mouseY <= 30) {
-            this.addiereAutos("E", EINFAHRTWARTEBEREICHX, EINFAHRTWARTEBEREICHY);
+            this.addiereAutos("E");
         } else if (mouseX >= 170 && mouseX <= 220 && mouseY >= 5
                 && mouseY <= 30) {
-            this.subtrahiereAutos("E", EINFAHRTWARTEBEREICHX,
-                    EINFAHRTWARTEBEREICHY);
+            this.subtrahiereAutos("E");
         } else if (mouseX >= 225 && mouseX <= 275 && mouseY >= 5
                 && mouseY <= 30) {
-            this.addiereAutos("A", AUSFAHRTWARTEBEREICHX, AUSFAHRTWARTEBEREICHY);
+            this.addiereAutos("A");
         } else if (mouseX >= 280 && mouseX <= 330 && mouseY >= 5
                 && mouseY <= 30) {
-            this.subtrahiereAutos("A", AUSFAHRTWARTEBEREICHX, AUSFAHRTWARTEBEREICHY);
+            this.subtrahiereAutos("A");
         } else if (mouseX >= 335 && mouseX <= 385 && mouseY >= 5
                 && mouseY <= 30) {
-            this.addiereAutos("B", BAUSTELLENBEREICHX, BAUSTELLENBEREICHY);
+            this.addiereAutos("B");
         } else if (mouseX >= 390 && mouseX <= 440 && mouseY >= 5
                 && mouseY <= 30) {
-            this.subtrahiereAutos("B", BAUSTELLENBEREICHX,
-                    BAUSTELLENBEREICHY);
+            this.subtrahiereAutos("B");
         } else if (mouseX >= 445 && mouseX <= 495 && mouseY >= 5
                 && mouseY <= 30) {
             this.ampelWechsleZustand();
@@ -210,60 +159,59 @@ public class Test extends PApplet {
         }
     }
 
-    private void addiereAutos(String wo, int x, int y) {
-//        int anz;
+    private void addiereAutos(String wo) {
         switch (wo) {
             case "P":
                 if (this.posParkplatz < ANZAHLAUTOSPARKHAUSSPALTE * ANZAHLAUTOSPARKHAUSZEILE) {
-                    this.addAutoAnPosition(x, y, this.posParkplatz % 10, this.posParkplatz / 10);
+                    this.addAutoAnPosition(PARKHAUSX, PARKHAUSY, this.posParkplatz % 10, this.posParkplatz / 10);
                     this.posParkplatz++;
                 }
                 break;
             case "E":
                 if (this.posEinfahrt < ANZAHLAUTOSEINFAHRT) {
-                    this.addAutoAnPosition(x, y, this.posEinfahrt % 10, this.posEinfahrt / 10);
+                    this.addAutoAnPosition(EINFAHRTWARTEBEREICHX, EINFAHRTWARTEBEREICHY, this.posEinfahrt % 10, this.posEinfahrt / 10);
                     this.posEinfahrt++;
                 }
                 break;
             case "A":
                 if (this.posAusfahrt < ANZAHLAUTOSAUSFAHRT) {
-                    this.addAutoAnPosition(x, y, this.posAusfahrt % 10, this.posAusfahrt / 10);
+                    this.addAutoAnPosition(AUSFAHRTWARTEBEREICHX, AUSFAHRTWARTEBEREICHY, this.posAusfahrt % 10, this.posAusfahrt / 10);
                     this.posAusfahrt++;
                 }
                 break;
             case "B":
                 if (this.posBaustelle < ANZAHLAUTOSBAUSTELLE) {
-                    this.addAutoAnPosition(x, y, this.posBaustelle / 10, this.posBaustelle % 10);
+                    this.addAutoAnPosition(BAUSTELLENBEREICHX, BAUSTELLENBEREICHY, this.posBaustelle / 10, this.posBaustelle % 10);
                     this.posBaustelle++;
                 }
                 break;
         }
     }
 
-    private void subtrahiereAutos(String wo, int x, int y) {
+    private void subtrahiereAutos(String wo) {
         switch (wo) {
             case "P":
                 if (this.posParkplatz > 0) {
                     this.posParkplatz--;
-                    this.subAutoAnPosition(x, y, this.posParkplatz % 10, this.posParkplatz / 10);
+                    this.subAutoAnPosition(PARKHAUSX, PARKHAUSY, this.posParkplatz % 10, this.posParkplatz / 10);
                 }
                 break;
             case "E":
                 if (this.posEinfahrt > 0) {
                     this.posEinfahrt--;
-                    this.subAutoAnPosition(x, y, this.posEinfahrt % 10, this.posEinfahrt / 10);
+                    this.subAutoAnPosition(EINFAHRTWARTEBEREICHX, EINFAHRTWARTEBEREICHY, this.posEinfahrt % 10, this.posEinfahrt / 10);
                 }
                 break;
             case "A":
                 if (this.posAusfahrt > 0) {
                     this.posAusfahrt--;
-                    this.subAutoAnPosition(x, y, this.posAusfahrt % 10, this.posAusfahrt / 10);
+                    this.subAutoAnPosition(AUSFAHRTWARTEBEREICHX, AUSFAHRTWARTEBEREICHY, this.posAusfahrt % 10, this.posAusfahrt / 10);
                 }
                 break;
             case "B":
                 if (this.posBaustelle > 0) {
                     this.posBaustelle--;
-                    this.subAutoAnPosition(x, y, this.posBaustelle / 10, this.posBaustelle % 10);
+                    this.subAutoAnPosition(BAUSTELLENBEREICHX, BAUSTELLENBEREICHY, this.posBaustelle / 10, this.posBaustelle % 10);
                 }
                 break;
         }

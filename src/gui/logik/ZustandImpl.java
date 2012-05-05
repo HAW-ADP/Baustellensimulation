@@ -110,8 +110,6 @@ public class ZustandImpl implements Zustand {
 			neueUhrzeitListeBaustelle.add(uhrzeit.addiere(baustellenPassierZeit).addiere(autoAbstandzeit));
 			neueLetzteBaustellenEinfahrt = uhrzeit;
 			neueUhrzeit = uhrzeit.addiere(autoAbstandzeit);
-			System.out.println("Neue Uhrzeit: " + neueUhrzeit);
-			System.out.println("baustellen-if");
 		}
 		
 		/** Autos verlassen Baustelle in beide Richtungen */

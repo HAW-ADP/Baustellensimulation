@@ -23,6 +23,12 @@ public class Test extends PApplet {
     // Position der Ampel f�r die Ausfahrt
     final private int AUSFAHRTAMPELX = 90;
     final private int AUSFAHRTAMPELY = 240;
+    // Fixe Größen
+    final private int ANZAHLAUTOSBAUSTELLE = 3;
+    final private int ANZAHLAUTOSPARKHAUSZEILE = 20;
+    final private int ANZAHLAUTOSPARKHAUSSPALTE = 10;
+    final private int ANZAHLAUTOSEINFAHRT = 5;
+    final private int ANZAHLAUTOSAUSFAHRT = 7;
     private PImage welt = loadImage("src\\gui\\img\\welt.jpg");
     private PImage weltUnten = loadImage("src\\gui\\img\\weltUnten.jpg");
     private PImage auto1 = loadImage("src\\gui\\img\\auto1.jpg");
@@ -31,11 +37,11 @@ public class Test extends PApplet {
     private float demoAuto1PosY = 471;
     private float demoAuto2PosX = 0;
     private float demoAuto2PosY = 545;
-    private int pos = 0;
+    private int posParkplatz = 0;
     private int posEinfahrt = 0;
     private int posAusfahrt = 0;
     private int posBaustelle = 0;
-    private int steps = 0;
+    private int stepsParkhaus = 0;
     private int stepsEinfahrt = 0;
     private int stepsAusfahrt = 0;
     private int stepsBaustelle = 0;
@@ -52,13 +58,13 @@ public class Test extends PApplet {
         image(weltUnten, 0, 469);
 
         // Parkplatz mit 10x10 Pl�tzen
-        zeichneRaster(PARKHAUSX, PARKHAUSY, 10, 10);
+        zeichneRaster(PARKHAUSX, PARKHAUSY, ANZAHLAUTOSPARKHAUSSPALTE, ANZAHLAUTOSPARKHAUSZEILE);
         // Warteschlange vor der Ausfahrt
-        zeichneRaster(AUSFAHRTWARTEBEREICHX, AUSFAHRTWARTEBEREICHY, 10, 1);
+        zeichneRaster(AUSFAHRTWARTEBEREICHX, AUSFAHRTWARTEBEREICHY, ANZAHLAUTOSAUSFAHRT, 1);
         // Wartebereich vor der Einfahrt
-        zeichneRaster(EINFAHRTWARTEBEREICHX, EINFAHRTWARTEBEREICHY, 10, 1);
+        zeichneRaster(EINFAHRTWARTEBEREICHX, EINFAHRTWARTEBEREICHY, ANZAHLAUTOSEINFAHRT, 1);
         // Baustellenbereich
-        zeichneRaster(BAUSTELLENBEREICHX, BAUSTELLENBEREICHY, 1, 4);
+        zeichneRaster(BAUSTELLENBEREICHX, BAUSTELLENBEREICHY, 1, ANZAHLAUTOSBAUSTELLE);
     }
 
     @Override
@@ -86,15 +92,17 @@ public class Test extends PApplet {
         rect(390, 5, 50, 25);
         // Knopf Ampelzustand
         rect(445, 5, 50, 25);
+        // Knopf nächster Zustand
+        rect(5, 35, 50, 25);
         // Ampel f�r die Einfahrt
         zeichneAmpel(EINFAHRTAMPELX, EINFAHRTAMPELY, ampelEinfahrt);
         // Ampel f�r die Ausfahrt
         zeichneAmpel(AUSFAHRTAMPELX, AUSFAHRTAMPELY, ampelAusfahrt);
         bewegeDemoAuto();
         // addiere Auto
-        if (this.steps > 0) {
+        if (this.stepsParkhaus > 0) {
             this.addiereAutos("P", PARKHAUSX, PARKHAUSY);
-            this.steps--;
+            this.stepsParkhaus--;
         } else if (this.stepsEinfahrt > 0) {
             this.addiereAutos("A", EINFAHRTWARTEBEREICHX, EINFAHRTWARTEBEREICHY);
             this.stepsEinfahrt--;
@@ -108,13 +116,47 @@ public class Test extends PApplet {
     }
 
     private void zeichneAmpel(int x, int y, String farbe) {
-        if (farbe.equals("R")) {
-            fill(255, 0, 0);
-        }
-        if (farbe.equals("G")) {
-            fill(0, 255, 0);
+        switch (farbe) {
+            case "R":
+                fill(255, 0, 0);
+                break;
+            case "G":
+                fill(0, 255, 0);
+                break;
         }
         ellipse(x, y, 10, 10);
+    }
+
+    public void simulation(String wo) {
+        switch (wo) {
+            case "P+":
+                this.addiereAutos("P", PARKHAUSX, PARKHAUSY);
+                break;
+            case "P-":
+                this.subtrahiereAutos("P", PARKHAUSX, PARKHAUSY);
+                break;
+            case "E+":
+                this.addiereAutos("E", EINFAHRTWARTEBEREICHX, EINFAHRTWARTEBEREICHY);
+                break;
+            case "E-":
+                this.subtrahiereAutos("E", EINFAHRTWARTEBEREICHX, EINFAHRTWARTEBEREICHY);
+                break;
+            case "A+":
+                this.addiereAutos("A", AUSFAHRTWARTEBEREICHX, AUSFAHRTWARTEBEREICHY);
+                break;
+            case "A-":
+                this.subtrahiereAutos("A", AUSFAHRTWARTEBEREICHX, AUSFAHRTWARTEBEREICHY);
+                break;
+            case "B+":
+                this.addiereAutos("B", BAUSTELLENBEREICHX, BAUSTELLENBEREICHY);
+                break;
+            case "B-":
+                this.subtrahiereAutos("B", BAUSTELLENBEREICHX, BAUSTELLENBEREICHY);
+                break;
+            case "AMPEL":
+                this.ampelWechsleZustand();
+                break;
+        }
     }
 
     @Override
@@ -135,8 +177,7 @@ public class Test extends PApplet {
             this.addiereAutos("A", AUSFAHRTWARTEBEREICHX, AUSFAHRTWARTEBEREICHY);
         } else if (mouseX >= 280 && mouseX <= 330 && mouseY >= 5
                 && mouseY <= 30) {
-            this.subtrahiereAutos("A", AUSFAHRTWARTEBEREICHX,
-                    AUSFAHRTWARTEBEREICHY);
+            this.subtrahiereAutos("A", AUSFAHRTWARTEBEREICHX, AUSFAHRTWARTEBEREICHY);
         } else if (mouseX >= 335 && mouseX <= 385 && mouseY >= 5
                 && mouseY <= 30) {
             this.addiereAutos("B", BAUSTELLENBEREICHX, BAUSTELLENBEREICHY);
@@ -151,16 +192,12 @@ public class Test extends PApplet {
     }
 
     private void ampelWechsleZustand() {
-        if (ampelZustand == 0) {
+        if (ampelZustand == 0 || ampelZustand == 2) {
             ampelAusfahrt = "R";
             ampelEinfahrt = "R";
             ampelZustand++;
         } else if (ampelZustand == 1) {
             ampelAusfahrt = "G";
-            ampelEinfahrt = "R";
-            ampelZustand++;
-        } else if (ampelZustand == 2) {
-            ampelAusfahrt = "R";
             ampelEinfahrt = "R";
             ampelZustand++;
         } else if (ampelZustand == 3) {
@@ -173,97 +210,76 @@ public class Test extends PApplet {
         }
     }
 
-    public void addiereAutos(String wo, int x, int y) {
-        int anz;
+    private void addiereAutos(String wo, int x, int y) {
+//        int anz;
         switch (wo) {
             case "P":
-                anz = 100;
-                if (this.pos < anz) {
-                    int zeile = this.pos / 10;
-                    int spalte = this.pos % 10;
-                    this.addAutoAnPosition(x, y, spalte, zeile);
-                    this.pos++;
+                if (this.posParkplatz < ANZAHLAUTOSPARKHAUSSPALTE * ANZAHLAUTOSPARKHAUSZEILE) {
+                    this.addAutoAnPosition(x, y, this.posParkplatz % 10, this.posParkplatz / 10);
+                    this.posParkplatz++;
                 }
                 break;
             case "E":
-                anz = 10;
-                if (this.posEinfahrt < anz) {
-                    int zeile = this.posEinfahrt / 10;
-                    int spalte = this.posEinfahrt % 10;
-                    this.addAutoAnPosition(x, y, spalte, zeile);
+                if (this.posEinfahrt < ANZAHLAUTOSEINFAHRT) {
+                    this.addAutoAnPosition(x, y, this.posEinfahrt % 10, this.posEinfahrt / 10);
                     this.posEinfahrt++;
                 }
                 break;
             case "A":
-                anz = 10;
-                if (this.posAusfahrt < anz) {
-                    int zeile = this.posAusfahrt / 10;
-                    int spalte = this.posAusfahrt % 10;
-                    this.addAutoAnPosition(x, y, spalte, zeile);
+                if (this.posAusfahrt < ANZAHLAUTOSAUSFAHRT) {
+                    this.addAutoAnPosition(x, y, this.posAusfahrt % 10, this.posAusfahrt / 10);
                     this.posAusfahrt++;
                 }
                 break;
             case "B":
-                anz = 4;
-                if (this.posBaustelle < anz) {
-                    int zeile = this.posBaustelle / 10;
-                    int spalte = this.posBaustelle % 10;
-                    this.addAutoAnPosition(x, y, zeile, spalte);
+                if (this.posBaustelle < ANZAHLAUTOSBAUSTELLE) {
+                    this.addAutoAnPosition(x, y, this.posBaustelle / 10, this.posBaustelle % 10);
                     this.posBaustelle++;
                 }
                 break;
         }
     }
 
-    public void subtrahiereAutos(String wo, int x, int y) {
+    private void subtrahiereAutos(String wo, int x, int y) {
         switch (wo) {
             case "P":
-                if (this.pos > 0) {
-                    this.pos--;
-                    int zeile = this.pos / 10;
-                    int spalte = this.pos % 10;
-                    this.subAutoAnPosition(x, y, spalte, zeile);
+                if (this.posParkplatz > 0) {
+                    this.posParkplatz--;
+                    this.subAutoAnPosition(x, y, this.posParkplatz % 10, this.posParkplatz / 10);
                 }
                 break;
             case "E":
                 if (this.posEinfahrt > 0) {
                     this.posEinfahrt--;
-                    int zeile = this.posEinfahrt / 10;
-                    int spalte = this.posEinfahrt % 10;
-                    this.subAutoAnPosition(x, y, spalte, zeile);
+                    this.subAutoAnPosition(x, y, this.posEinfahrt % 10, this.posEinfahrt / 10);
                 }
                 break;
             case "A":
                 if (this.posAusfahrt > 0) {
                     this.posAusfahrt--;
-                    int zeile = this.posAusfahrt / 10;
-                    int spalte = this.posAusfahrt % 10;
-                    this.subAutoAnPosition(x, y, spalte, zeile);
+                    this.subAutoAnPosition(x, y, this.posAusfahrt % 10, this.posAusfahrt / 10);
                 }
                 break;
-           case "B":
+            case "B":
                 if (this.posBaustelle > 0) {
                     this.posBaustelle--;
-                    int zeile = this.posBaustelle / 10;
-                    int spalte = this.posBaustelle % 10;
-                    this.subAutoAnPosition(x, y, zeile, spalte);
+                    this.subAutoAnPosition(x, y, this.posBaustelle / 10, this.posBaustelle % 10);
                 }
                 break;
         }
     }
 
-    public void addAutoAnPosition(int pX, int pY, int x, int y) {
+    private void addAutoAnPosition(int pX, int pY, int x, int y) {
         fill(255, 0, 0);
         rect(pX + (x * 10), pY + (y * 10), 10, 10);
-        fill(255, 255, 255);
     }
 
-    public void subAutoAnPosition(int pX, int pY, int x, int y) {
+    private void subAutoAnPosition(int pX, int pY, int x, int y) {
         fill(255, 255, 255);
         rect(pX + (x * 10), pY + (y * 10), 10, 10);
     }
 
-    public void zeichneRaster(int pX, int pY, int cols, int rows) {
+    private void zeichneRaster(int pX, int pY, int cols, int rows) {
         for (int x = 0; x < cols; x++) {
             for (int y = 0; y < rows; y++) {
                 rect(pX + (x * 10), pY + (y * 10), 10, 10);

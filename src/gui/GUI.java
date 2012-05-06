@@ -32,11 +32,10 @@ public class GUI extends PApplet {
     final private int AUSFAHRTAMPELX = 90;
     final private int AUSFAHRTAMPELY = 240;
     // Fixe Größen
-    final private int BAUSTELLEKAPAZITAET = 6;
     final private int PARKHAUSZEILEKAPAZITAET = 20;
     final private int PARKHAUSSPALTEKAPAZITAET = 10;
     final private int EINFAHRTKAPAZITAET = 10;
-    final private int AUSFAHRTKAPAZITAET = 10;
+//    final private int AUSFAHRTKAPAZITAET = 10;
     private PImage welt = loadImage("src\\gui\\img\\welt.jpg");
     private PImage weltUnten = loadImage("src\\gui\\img\\weltUnten.jpg");
     private PImage auto1 = loadImage("src\\gui\\img\\auto1.jpg");
@@ -80,26 +79,32 @@ public class GUI extends PApplet {
         frameRate(30);
         image(welt, 0, 0);
         image(weltUnten, 0, 469);
-        // Farbe f�r die Kn�pfe (WEISS)
-        fill(255);
         // Knopf Step-Modus Parkplatz
+        fill(255);
         rect(5, 5, 50, 25);
+        fill(0);
         rect(20, 10, 5, 15);
+        fill(0);
         triangle(30, 10, 30, 25, 40, 17);
         // Knopf AutomatischerModus start
+        fill(255);
         rect(60, 5, 50, 25);
+        fill(0);
         triangle(80, 10, 80, 25, 90, 17);
         // Knopf AutomatischerModus stop
+        fill(255);
         rect(115, 5, 50, 25);
+        fill(0);
         rect(132, 10, 15, 15);
         // Parkplatz mit 10x10 Pl�tzen
-        zeichneRaster(PARKHAUSX, PARKHAUSY, PARKHAUSSPALTEKAPAZITAET, PARKHAUSZEILEKAPAZITAET);
+//        fill(255);
+//        zeichneRaster(PARKHAUSX, PARKHAUSY, PARKHAUSSPALTEKAPAZITAET, PARKHAUSZEILEKAPAZITAET);
         // Warteschlange vor der Ausfahrt
-        zeichneRaster(AUSFAHRTWARTEBEREICHX, AUSFAHRTWARTEBEREICHY, AUSFAHRTKAPAZITAET, 1);
+//        zeichneRaster(AUSFAHRTWARTEBEREICHX, AUSFAHRTWARTEBEREICHY, AUSFAHRTKAPAZITAET, 1);
         // Wartebereich vor der Einfahrt
-        zeichneRaster(EINFAHRTWARTEBEREICHX, EINFAHRTWARTEBEREICHY, EINFAHRTKAPAZITAET, 1);
+//        zeichneRaster(EINFAHRTWARTEBEREICHX, EINFAHRTWARTEBEREICHY, EINFAHRTKAPAZITAET, 1);
         // Baustellenbereich
-        zeichneRaster(BAUSTELLENBEREICHX, BAUSTELLENBEREICHY, 1, BAUSTELLEKAPAZITAET);
+//        zeichneRaster(BAUSTELLENBEREICHX, BAUSTELLENBEREICHY, 1, zustand.getBaustellenAutos());
     }
 
     @Override
@@ -139,7 +144,6 @@ public class GUI extends PApplet {
 
     @Override
     public void mouseReleased() {
-
         if (mouseX >= 5 && mouseX <= 55 && mouseY >= 5 && mouseY <= 30) {
             this.zustand = this.zustand.naechsterZustand();
             this.ampelWechsleZustand();
@@ -207,13 +211,13 @@ public class GUI extends PApplet {
                 }
                 break;
             case "A":
-                if (this.posAusfahrt < AUSFAHRTKAPAZITAET) {
+                if (this.posAusfahrt < PARKHAUSSPALTEKAPAZITAET * PARKHAUSZEILEKAPAZITAET) {
                     this.addAutoAnPosition(AUSFAHRTWARTEBEREICHX, AUSFAHRTWARTEBEREICHY, this.posAusfahrt % 10, this.posAusfahrt / 10);
                     this.posAusfahrt++;
                 }
                 break;
             case "B":
-                if (this.posBaustelle < BAUSTELLEKAPAZITAET) {
+                if (this.posBaustelle < zustand.getBaustellenAutos()) {
                     this.addAutoAnPosition(BAUSTELLENBEREICHX, BAUSTELLENBEREICHY, this.posBaustelle / 10, this.posBaustelle % 10);
                     this.posBaustelle++;
                 }
@@ -251,22 +255,23 @@ public class GUI extends PApplet {
     }
 
     private void addAutoAnPosition(int pX, int pY, int x, int y) {
-        fill(255, 0, 0);
+        fill(0, 0, 255);
         rect(pX + (x * 10), pY + (y * 10), 10, 10);
     }
 
     private void subAutoAnPosition(int pX, int pY, int x, int y) {
         fill(255, 255, 255);
         rect(pX + (x * 10), pY + (y * 10), 10, 10);
+        
     }
 
-    private void zeichneRaster(int pX, int pY, int cols, int rows) {
-        for (int x = 0; x < cols; x++) {
-            for (int y = 0; y < rows; y++) {
-                rect(pX + (x * 10), pY + (y * 10), 10, 10);
-            }
-        }
-    }
+//    private void zeichneRaster(int pX, int pY, int cols, int rows) {
+//        for (int x = 0; x < cols; x++) {
+//            for (int y = 0; y < rows; y++) {
+//                rect(pX + (x * 10), pY + (y * 10), 10, 10);
+//            }
+//        }
+//    }
 
     private void bewegeDemoAuto() {
         demoAuto1PosX = demoAuto1PosX - 2;

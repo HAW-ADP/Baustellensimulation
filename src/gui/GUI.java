@@ -13,6 +13,7 @@ import processing.core.PImage;
 
 public class GUI extends PApplet {
     // Position Parkhaus
+
     final private int PARKHAUSX = 390;
     final private int PARKHAUSY = 187;
     // Position Wartebereich f�r die Ausfahrt
@@ -33,7 +34,7 @@ public class GUI extends PApplet {
     // Fixe Größen
     final private int PARKHAUSZEILEKAPAZITAET = 20;
     final private int PARKHAUSSPALTEKAPAZITAET = 10;
-    final private int EINFAHRTKAPAZITAET = 10;
+    final private int EINFAHRTKAPAZITAET = 3;
     // final private int AUSFAHRTKAPAZITAET = 10;
     private PImage welt = loadImage("src\\gui\\img\\welt.jpg");
     private PImage weltUnten = loadImage("src\\gui\\img\\weltUnten.jpg");
@@ -70,6 +71,7 @@ public class GUI extends PApplet {
     private String ampelEinfahrt = "R";
     private String ampelAusfahrt = "R";
     boolean gestartet = false;
+    int pause = 0;
 
     @Override
     public void setup() {
@@ -96,12 +98,12 @@ public class GUI extends PApplet {
         fill(0);
         rect(132, 10, 15, 15);
         // Parkplatz mit 10x10 Pl�tzen
-//        fill(255);
-//        zeichneRaster(PARKHAUSX, PARKHAUSY, PARKHAUSSPALTEKAPAZITAET, PARKHAUSZEILEKAPAZITAET);
+        fill(255);
+        zeichneRaster(PARKHAUSX, PARKHAUSY, PARKHAUSSPALTEKAPAZITAET, PARKHAUSZEILEKAPAZITAET);
         // Warteschlange vor der Ausfahrt
 //        zeichneRaster(AUSFAHRTWARTEBEREICHX, AUSFAHRTWARTEBEREICHY, AUSFAHRTKAPAZITAET, 1);
         // Wartebereich vor der Einfahrt
-//        zeichneRaster(EINFAHRTWARTEBEREICHX, EINFAHRTWARTEBEREICHY, EINFAHRTKAPAZITAET, 1);
+        zeichneRaster(EINFAHRTWARTEBEREICHX, EINFAHRTWARTEBEREICHY, EINFAHRTKAPAZITAET, 1);
         // Baustellenbereich
 //        zeichneRaster(BAUSTELLENBEREICHX, BAUSTELLENBEREICHY, 1, zustand.getBaustellenAutos());
     }
@@ -109,6 +111,10 @@ public class GUI extends PApplet {
     @Override
     public void draw() {
         stroke(0);
+        fill(0);
+        rect(395,7,100,15);
+        fill(255);
+        text(zustand.getUhrzeit().toString(), 400, 20);
         //Immer wieder laden, da das Spielfeld verwischt wird
         image(weltUnten, 0, 469);
         // Ampel f�r die Einfahrt
@@ -117,16 +123,15 @@ public class GUI extends PApplet {
         zeichneAmpel(AUSFAHRTAMPELX, AUSFAHRTAMPELY, ampelAusfahrt);
         bewegeDemoAuto();
         //Automatischer Modus
-        if (gestartet) {
-            this.zustand = this.zustand.naechsterZustand();
-            this.ampelWechsleZustand();
-            this.updateWartebereiche();
-            try {
-                Thread.sleep(0);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+        if (pause >= 10) {
+            if (gestartet) {
+                this.zustand = this.zustand.naechsterZustand();
+                this.ampelWechsleZustand();
+                this.updateWartebereiche();
             }
+            pause = 0;
         }
+        pause++;
     }
 
     private void zeichneAmpel(int x, int y, String farbe) {
@@ -255,33 +260,34 @@ public class GUI extends PApplet {
 
     private void addAutoAnPosition(int pX, int pY, int x, int y) {
         fill(0, 0, 255);
-        stroke(255);
+//        stroke(255);
         rect(pX + (x * 10), pY + (y * 10), 10, 10);
     }
 
     private void subAutoAnPosition(int pX, int pY, int x, int y) {
         fill(255, 255, 255);
-        stroke(255);
+//        stroke(255);
         rect(pX + (x * 10), pY + (y * 10), 10, 10);
 
     }
 
-//    private void zeichneRaster(int pX, int pY, int cols, int rows) {
-//        for (int x = 0; x < cols; x++) {
-//            for (int y = 0; y < rows; y++) {
-//                rect(pX + (x * 10), pY + (y * 10), 10, 10);
-//            }
-//        }
-//    }
+    private void zeichneRaster(int pX, int pY, int cols, int rows) {
+        for (int x = 0; x < cols; x++) {
+            for (int y = 0; y < rows; y++) {
+                rect(pX + (x * 10), pY + (y * 10), 10, 10);
+            }
+        }
+    }
+
     private void bewegeDemoAuto() {
         demoAuto1PosX = demoAuto1PosX - 2;
         image(auto1, demoAuto1PosX, demoAuto1PosY);
-        if (demoAuto1PosX < - 20) {
-            demoAuto1PosX = 500;
+        if (demoAuto1PosX < -20) {
+            demoAuto1PosX = 520;
         }
         demoAuto2PosX = demoAuto2PosX + 3;
         image(auto2, demoAuto2PosX, demoAuto2PosY);
-        if (demoAuto2PosX > 500) {
+        if (demoAuto2PosX > 520) {
             demoAuto2PosX = 0;
         }
     }

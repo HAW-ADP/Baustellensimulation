@@ -13,7 +13,6 @@ import processing.core.PImage;
 
 public class GUI extends PApplet {
     // Position Parkhaus
-
     final private int PARKHAUSX = 390;
     final private int PARKHAUSY = 187;
     // Position Wartebereich f�r die Ausfahrt
@@ -35,7 +34,7 @@ public class GUI extends PApplet {
     final private int PARKHAUSZEILEKAPAZITAET = 20;
     final private int PARKHAUSSPALTEKAPAZITAET = 10;
     final private int EINFAHRTKAPAZITAET = 10;
-//    final private int AUSFAHRTKAPAZITAET = 10;
+    // final private int AUSFAHRTKAPAZITAET = 10;
     private PImage welt = loadImage("src\\gui\\img\\welt.jpg");
     private PImage weltUnten = loadImage("src\\gui\\img\\weltUnten.jpg");
     private PImage auto1 = loadImage("src\\gui\\img\\auto1.jpg");
@@ -123,7 +122,7 @@ public class GUI extends PApplet {
             this.ampelWechsleZustand();
             this.updateWartebereiche();
             try {
-                Thread.sleep(1000);
+                Thread.sleep(0);
             } catch (InterruptedException ex) {
                 Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -256,13 +255,15 @@ public class GUI extends PApplet {
 
     private void addAutoAnPosition(int pX, int pY, int x, int y) {
         fill(0, 0, 255);
+        stroke(255);
         rect(pX + (x * 10), pY + (y * 10), 10, 10);
     }
 
     private void subAutoAnPosition(int pX, int pY, int x, int y) {
         fill(255, 255, 255);
+        stroke(255);
         rect(pX + (x * 10), pY + (y * 10), 10, 10);
-        
+
     }
 
 //    private void zeichneRaster(int pX, int pY, int cols, int rows) {
@@ -272,7 +273,6 @@ public class GUI extends PApplet {
 //            }
 //        }
 //    }
-
     private void bewegeDemoAuto() {
         demoAuto1PosX = demoAuto1PosX - 2;
         image(auto1, demoAuto1PosX, demoAuto1PosY);

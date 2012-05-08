@@ -176,7 +176,7 @@ public class ZustandImpl implements Zustand {
 		}
 
 		// Parkplatz voll
-		if (uhrzeitListeParkplatz.size() == umgebung.getParkplatzKapazitaet()) {
+		if (uhrzeitListeParkplatz.size() == (umgebung.getParkplatzKapazitaet()*9/10)) {
 			if (!(ampelzustand == Zustand.EINFAHRT))
 				return Zustand.AUSFAHRT;
 			else

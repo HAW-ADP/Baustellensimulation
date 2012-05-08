@@ -97,22 +97,22 @@ public class ZustandImpl implements Zustand {
 		/** Auto faehrt von Einfahrt in Baustelle */
 		if (Zustand.EINFAHRT == naechsterAmpelzustand
 				&& anzahlEinfahrtAutos > 0
-				&& letzteBaustellenEinfahrt.compareTo(neueUhrzeit) <= -3) {
+				&& letzteBaustellenEinfahrt.compareTo(neueUhrzeit) <= (-1 * umgebung.getAutoAbstandzeit().gesamtZeitSekunden())) {
 			neueAnzahlEinfahrtAutos--;
-			neueUhrzeitListeBaustelle.add(uhrzeit.addiere(
-					umgebung.getBaustellenPassierZeit()).addiere(
-					umgebung.getAutoAbstandzeit()));
+
+			neueUhrzeitListeBaustelle.add(uhrzeit.addiere(umgebung.getBaustellenPassierZeit()));
+			
 			neueLetzteBaustellenEinfahrt = uhrzeit;
 			neueUhrzeit = uhrzeit.addiere(umgebung.getAutoAbstandzeit());
 
 			/** Auto faehrt von Ausfahrt in Baustelle */
 		} else if (Zustand.AUSFAHRT == naechsterAmpelzustand
 				&& anzahlAusfahrtAutos > 0
-				&& letzteBaustellenEinfahrt.compareTo(neueUhrzeit) <= -3) {
+				&& letzteBaustellenEinfahrt.compareTo(neueUhrzeit) <= (-1 * umgebung.getAutoAbstandzeit().gesamtZeitSekunden())) {
 			neueAnzahlAusfahrtAutos--;
-			neueUhrzeitListeBaustelle.add(uhrzeit.addiere(
-					umgebung.getBaustellenPassierZeit()).addiere(
-					umgebung.getAutoAbstandzeit()));
+			
+			neueUhrzeitListeBaustelle.add(uhrzeit.addiere(umgebung.getBaustellenPassierZeit()));
+			
 			neueLetzteBaustellenEinfahrt = uhrzeit;
 			neueUhrzeit = uhrzeit.addiere(umgebung.getAutoAbstandzeit());
 		}

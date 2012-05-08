@@ -195,10 +195,12 @@ public class ZustandImpl implements Zustand {
 		// AUSFAHRT -> AUSFAHRT oder STOP_AUSFAHRT -> AUSFAHRT
 		// wenn Autos nur in Ausfahrt
 		if (anzahlEinfahrtAutos == 0 && anzahlAusfahrtAutos > 0) {
-			if (ampelzustand == Zustand.EINFAHRT)
-				return Zustand.EINFAHRT;
-			if (ampelzustand == Zustand.STOP_EINFAHRT)
-				return Zustand.EINFAHRT;
+			if (ampelzustand == Zustand.AUSFAHRT)
+				return Zustand.AUSFAHRT;
+			if (ampelzustand == Zustand.STOP_AUSFAHRT)
+				return Zustand.AUSFAHRT;
+			if (ampelzustand == Zustand.STOP_BEIDE)
+				return Zustand.AUSFAHRT;
 		}
 
 		// STOP_EINFAHRT/STOP_AUSFAHRT -> STOP_BEIDE
@@ -206,12 +208,6 @@ public class ZustandImpl implements Zustand {
 			if (ampelzustand == Zustand.STOP_EINFAHRT
 					|| ampelzustand == Zustand.STOP_AUSFAHRT)
 				return Zustand.STOP_BEIDE;
-		}
-
-		// STOP_BEIDE -> Ausfahrt
-		if (anzahlEinfahrtAutos == 0 && anzahlAusfahrtAutos > 0
-				&& ampelzustand == Zustand.STOP_BEIDE) {
-			return Zustand.AUSFAHRT;
 		}
 
 		// wenn keiner dieser Fï¿½lle zutrifft, schaltet die Ampel normal
@@ -240,11 +236,8 @@ public class ZustandImpl implements Zustand {
 		Uhrzeit zeitAusfahrt = umgebung.getAutoAbstandzeit().multipliziere(
 				anzahlAusfahrtAutos);
 		
-		// berechnen, ob alle Autos in der Einfahrt in den Parkplatz passen
+		// Überschuss an Autos
 		int ueberschussEinfahrt = (anzahlEinfahrtAutos + uhrzeitListeParkplatz
-				.size()) - umgebung.getParkplatzKapazitaet();
-		// berechnen, ob alle Autos in der Ausfahrt in den Parkplatz passen
-		int ueberschussAusfahrt = (anzahlAusfahrtAutos + uhrzeitListeParkplatz
 				.size()) - umgebung.getParkplatzKapazitaet();
 
 		// gibt es einen ï¿½berschuss an Autos?
@@ -253,9 +246,6 @@ public class ZustandImpl implements Zustand {
 		if (ueberschussEinfahrt > 0)
 			zeitEinfahrt = umgebung.getAutoAbstandzeit().multipliziere(
 					anzahlEinfahrtAutos - ueberschussEinfahrt);
-		if (ueberschussAusfahrt > 0)
-			zeitAusfahrt = umgebung.getAutoAbstandzeit().multipliziere(
-					anzahlAusfahrtAutos - ueberschussAusfahrt);
 
 		switch (neuerAmpelzustand) {
 		case (Zustand.EINFAHRT):
@@ -277,11 +267,9 @@ public class ZustandImpl implements Zustand {
 			Iterator<Uhrzeit> parkplatzIter = uhrzeitListeParkplatz.iterator();
 			while (parkplatzIter.hasNext()) {
 				Uhrzeit curr = parkplatzIter.next();
-				if (curr.compareTo(uhrzeit) > 0) {
 					if (curr.compareTo(naechste) < 0) {
 						naechste = curr;
 					}
-				}
 			}
 			return naechste;
 		default:

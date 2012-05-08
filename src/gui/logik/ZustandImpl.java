@@ -253,7 +253,7 @@ public class ZustandImpl implements Zustand {
 
 		// Überschuss an Autos
 		int ueberschussEinfahrt = (anzahlEinfahrtAutos + uhrzeitListeParkplatz
-				.size()) - umgebung.getParkplatzKapazitaet();
+				.size()) - umgebung.getParkplatzKapazitaet()*9/10;
 
 		// gibt es einen ï¿½berschuss an Autos?
 		// wenn ja (ï¿½berschuss > 0), muss der ï¿½berschuss von der Anzahl

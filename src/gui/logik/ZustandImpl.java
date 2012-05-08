@@ -294,7 +294,6 @@ public class ZustandImpl implements Zustand {
 					naechste = curr;
 				}
 			}
-			System.out.println("!!!!!!!!!!!!!!!!!STOP BEIDE: " + naechste);
 
 			return naechste.addiere(umgebung.getAutoAbstandzeit());
 		default:

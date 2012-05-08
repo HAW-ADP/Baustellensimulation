@@ -3,8 +3,6 @@ package gui;
 import gui.logik.*;
 import java.util.PriorityQueue;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import processing.core.PApplet;
 import processing.core.PImage;
 

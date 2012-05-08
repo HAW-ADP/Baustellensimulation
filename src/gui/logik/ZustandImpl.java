@@ -271,7 +271,7 @@ public class ZustandImpl implements Zustand {
 						naechste = curr;
 					}
 			}
-			return naechste.addiere(umgebung.getAutoAbstandzeit());
+			return naechste;
 		default:
 			return neueUhrzeit.addiere(umgebung.getMaximaleRotPhase());
 		}

@@ -36,7 +36,7 @@ public class Simulation
                 maxAutoAnkunft, maxRot, parkplatzKapazitaet,
                 einfahrtKapazitaet);
 
-        Zustand zustand = new ZustandImpl(0, 0, Zustand.STOP_AUSFAHRT, naechstesAutoEinfahrt,
+        Zustand zustand = new ZustandImpl(0, 0, Zustand.STOP_BEIDE, naechstesAutoEinfahrt,
                 startzeit, new PriorityQueue<Uhrzeit>(), new PriorityQueue<Uhrzeit>(),
                 naechstesAutoEinfahrt, new UhrzeitImpl(0, 0, 0), umgebung);
 

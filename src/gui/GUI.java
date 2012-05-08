@@ -1,9 +1,6 @@
 package gui;
 
-import gui.logik.Uhrzeit;
-import gui.logik.UhrzeitImpl;
-import gui.logik.Zustand;
-import gui.logik.ZustandImpl;
+import gui.logik.*;
 import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.logging.Level;
@@ -48,18 +45,19 @@ public class GUI extends PApplet {
     int maxAnkunft = maxAutoAnkunft.gesamtZeitSekunden();
     int naechstesAutoEinfahrtInt = minAnkunft + rand.nextInt(maxAnkunft - minAnkunft);
     Uhrzeit startzeit = new UhrzeitImpl(10, 0, 0);
-    Uhrzeit endzeit = new UhrzeitImpl(22, 0, 0);
     Uhrzeit naechstesAutoEinfahrt = new UhrzeitImpl(naechstesAutoEinfahrtInt).addiere(startzeit);
     Uhrzeit autoAbstand = new UhrzeitImpl(3);
     Uhrzeit baustellenZeit = new UhrzeitImpl(20);
     Uhrzeit minParkDauer = new UhrzeitImpl(0, 30, 0);
     Uhrzeit maxParkDauer = new UhrzeitImpl(1, 0, 0);
     Uhrzeit maxRot = new UhrzeitImpl(0, 2, 0);
+    ZustandsUmgebung umgebung = new ZustandsUmgebung(autoAbstand, baustellenZeit,
+            minParkDauer, maxParkDauer, minAutoAnkunft,
+            maxAutoAnkunft, maxRot, PARKHAUSSPALTEKAPAZITAET * PARKHAUSZEILEKAPAZITAET,
+            EINFAHRTKAPAZITAET);
     Zustand zustand = new ZustandImpl(0, 0, Zustand.STOP_AUSFAHRT, naechstesAutoEinfahrt,
             startzeit, new PriorityQueue<Uhrzeit>(), new PriorityQueue<Uhrzeit>(),
-            naechstesAutoEinfahrt, new UhrzeitImpl(0, 0, 0), autoAbstand, baustellenZeit,
-            minParkDauer, maxParkDauer, minAutoAnkunft, maxAutoAnkunft, maxRot,
-            PARKHAUSSPALTEKAPAZITAET * PARKHAUSZEILEKAPAZITAET, EINFAHRTKAPAZITAET);
+            naechstesAutoEinfahrt, new UhrzeitImpl(0, 0, 0), umgebung);
     private float demoAuto1PosX = 500;
     private float demoAuto1PosY = 471;
     private float demoAuto2PosX = 0;
@@ -112,7 +110,7 @@ public class GUI extends PApplet {
     public void draw() {
         stroke(0);
         fill(0);
-        rect(395,7,100,15);
+        rect(395, 7, 100, 15);
         fill(255);
         text(zustand.getUhrzeit().toString(), 400, 20);
         //Immer wieder laden, da das Spielfeld verwischt wird
@@ -169,7 +167,11 @@ public class GUI extends PApplet {
             ampelAusfahrt = "G";
         } else if (zustand.getAmpelzustand() == 4) {
             ampelAusfahrt = "R";
+        } else if (zustand.getAmpelzustand() == 5) {
+            ampelAusfahrt = "R";
+            ampelEinfahrt = "R";
         }
+
     }
 
     private void updateWartebereiche() {

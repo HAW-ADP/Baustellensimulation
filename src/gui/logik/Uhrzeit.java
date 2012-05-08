@@ -9,6 +9,8 @@ public interface Uhrzeit extends Zeitkonstanten, Comparable<Uhrzeit> {
 	
 	public Uhrzeit addiere(Uhrzeit zeit);
 	
+	public Uhrzeit multipliziere(int fac);
+	
 	public int gesamtZeitSekunden();
 	
 	public Uhrzeit copy();

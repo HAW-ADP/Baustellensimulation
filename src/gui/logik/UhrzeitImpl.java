@@ -87,6 +87,10 @@ public class UhrzeitImpl implements Uhrzeit {
 		return new UhrzeitImpl(stunden, minuten, sekunden);
 	}
 	
+	 public Uhrzeit multipliziere(int fac) {
+		  return new UhrzeitImpl(this.gesamtZeitSekunden()*fac);
+	 }
+	
 	public Uhrzeit copy(){
 		return new UhrzeitImpl(stunden, minuten, sekunden);
 	}

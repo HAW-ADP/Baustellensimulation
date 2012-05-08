@@ -264,14 +264,13 @@ public class ZustandImpl implements Zustand {
 			return neueUhrzeit.addiere(umgebung.getBaustellenPassierZeit());
 		case (Zustand.STOP_BEIDE):
 			Uhrzeit naechste = naechsteAutoEinfahrt;
-			Iterator<Uhrzeit> parkplatzIter = uhrzeitListeParkplatz.iterator();
-			while (parkplatzIter.hasNext()) {
-				Uhrzeit curr = parkplatzIter.next();
-					if (curr.compareTo(naechste) < 0) {
-						naechste = curr;
-					}
+			Uhrzeit curr = uhrzeitListeParkplatz.peek();
+			
+			if (curr.compareTo(naechste) < 0) {
+				naechste = curr;
 			}
-			return naechste;
+			
+			return naechste.addiere(umgebung.getAutoAbstandzeit());
 		default:
 			return neueUhrzeit.addiere(umgebung.getMaximaleRotPhase());
 		}

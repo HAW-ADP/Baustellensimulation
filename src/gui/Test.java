@@ -1,9 +1,6 @@
 package gui;
 
-import gui.logik.Uhrzeit;
-import gui.logik.UhrzeitImpl;
-import gui.logik.Zustand;
-import gui.logik.ZustandImpl;
+import gui.logik.*;
 import java.util.PriorityQueue;
 import java.util.Random;
 import processing.core.PApplet;
@@ -54,11 +51,14 @@ public class Test extends PApplet {
     Uhrzeit maxParkDauer = new UhrzeitImpl(1, 0, 0);
     Uhrzeit maxRot = new UhrzeitImpl(0, 2, 0);
     
+    ZustandsUmgebung umgebung = new ZustandsUmgebung(autoAbstand, baustellenZeit,
+            minParkDauer, maxParkDauer, minAutoAnkunft,
+            maxAutoAnkunft, maxRot, PARKHAUSSPALTEKAPAZITAET * PARKHAUSZEILEKAPAZITAET,
+            EINFAHRTKAPAZITAET);
     Zustand zustand = new ZustandImpl(0, 0, Zustand.STOP_AUSFAHRT, naechstesAutoEinfahrt,
             startzeit, new PriorityQueue<Uhrzeit>(), new PriorityQueue<Uhrzeit>(),
-            naechstesAutoEinfahrt, new UhrzeitImpl(0, 0, 0), autoAbstand, baustellenZeit,
-            minParkDauer, maxParkDauer, minAutoAnkunft, maxAutoAnkunft, maxRot,
-            PARKHAUSSPALTEKAPAZITAET * PARKHAUSZEILEKAPAZITAET, EINFAHRTKAPAZITAET);
+            naechstesAutoEinfahrt, new UhrzeitImpl(0, 0, 0), umgebung);
+
     private float demoAuto1PosX = 500;
     private float demoAuto1PosY = 471;
     private float demoAuto2PosX = 0;

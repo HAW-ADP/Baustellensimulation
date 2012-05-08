@@ -73,10 +73,8 @@ public class ZustandImpl implements Zustand {
 		IOSystem.loggeZustand(this);
 
 		Uhrzeit neueUhrzeit = naechsteUhrzeit();
-		int naechsterAmpelzustand = (neueUhrzeit.compareTo(ampelzustandZeit) == 0) ? naechsterAmpelzustand()
-				: ampelzustand;
-		Uhrzeit neueAmpelzustandZeit = (ampelzustand != naechsterAmpelzustand) ? naechsteAmpelzustandZeit(
-				naechsterAmpelzustand, neueUhrzeit) : ampelzustandZeit;
+		Uhrzeit neueAmpelzustandZeit = ampelzustandZeit;
+		int naechsterAmpelzustand = ampelzustand;
 
 		int neueAnzahlEinfahrtAutos = anzahlEinfahrtAutos;
 		int neueAnzahlAusfahrtAutos = anzahlAusfahrtAutos;
@@ -97,25 +95,45 @@ public class ZustandImpl implements Zustand {
 		/** Auto faehrt von Einfahrt in Baustelle */
 		if (Zustand.EINFAHRT == naechsterAmpelzustand
 				&& anzahlEinfahrtAutos > 0
-				&& letzteBaustellenEinfahrt.compareTo(neueUhrzeit) <= (-1 * umgebung.getAutoAbstandzeit().gesamtZeitSekunden())) {
+				&& letzteBaustellenEinfahrt.compareTo(neueUhrzeit) <= (-1 * umgebung
+						.getAutoAbstandzeit().gesamtZeitSekunden())) {
 			neueAnzahlEinfahrtAutos--;
 
-			neueUhrzeitListeBaustelle.add(uhrzeit.addiere(umgebung.getBaustellenPassierZeit()));
-			
+			System.out.println("AUTO Einfahrt => Baustelle");
+
+			neueUhrzeitListeBaustelle.add(uhrzeit.addiere(umgebung
+					.getBaustellenPassierZeit()));
+
 			neueLetzteBaustellenEinfahrt = uhrzeit;
-			neueUhrzeit = uhrzeit.addiere(umgebung.getAutoAbstandzeit());
+			Uhrzeit naechsteAutoZeit = uhrzeit.addiere(umgebung
+					.getAutoAbstandzeit());
+			neueUhrzeit = naechsteAutoZeit.compareTo(neueUhrzeit) < 0 ? naechsteAutoZeit
+					: neueUhrzeit;
 
 			/** Auto faehrt von Ausfahrt in Baustelle */
 		} else if (Zustand.AUSFAHRT == naechsterAmpelzustand
 				&& anzahlAusfahrtAutos > 0
-				&& letzteBaustellenEinfahrt.compareTo(neueUhrzeit) <= (-1 * umgebung.getAutoAbstandzeit().gesamtZeitSekunden())) {
+				&& letzteBaustellenEinfahrt.compareTo(neueUhrzeit) <= (-1 * umgebung
+						.getAutoAbstandzeit().gesamtZeitSekunden())) {
 			neueAnzahlAusfahrtAutos--;
-			
-			neueUhrzeitListeBaustelle.add(uhrzeit.addiere(umgebung.getBaustellenPassierZeit()));
-			
+
+			neueUhrzeitListeBaustelle.add(uhrzeit.addiere(umgebung
+					.getBaustellenPassierZeit()));
+
 			neueLetzteBaustellenEinfahrt = uhrzeit;
-			neueUhrzeit = uhrzeit.addiere(umgebung.getAutoAbstandzeit());
+			Uhrzeit naechsteAutoZeit = uhrzeit.addiere(umgebung
+					.getAutoAbstandzeit());
+			neueUhrzeit = naechsteAutoZeit.compareTo(neueUhrzeit) < 0 ? naechsteAutoZeit
+					: neueUhrzeit;
 		}
+
+		naechsterAmpelzustand = (neueUhrzeit.compareTo(ampelzustandZeit) == 0) ? naechsterAmpelzustand()
+				: ampelzustand;
+		neueAmpelzustandZeit = (ampelzustand != naechsterAmpelzustand||naechsterAmpelzustand == Zustand.STOP_BEIDE) ? naechsteAmpelzustandZeit(
+				naechsterAmpelzustand, neueUhrzeit) : ampelzustandZeit;
+
+		if (neueAmpelzustandZeit.compareTo(neueUhrzeit) < 0)
+			neueUhrzeit = neueAmpelzustandZeit;
 
 		/** Autos verlassen Baustelle in beide Richtungen */
 		if (!neueUhrzeitListeBaustelle.isEmpty()
@@ -162,10 +180,11 @@ public class ZustandImpl implements Zustand {
 
 	/**
 	 * Gibt je nach der Simulationssituation EINFAHRT, AUSFAHRT, STOP_EINFAHRT,
-	 * STOP_AUSFAHRT oder STOP_BEIDE zurueck sowie die Dauer dieses naechsten Zustands
+	 * STOP_AUSFAHRT oder STOP_BEIDE zurueck sowie die Dauer dieses naechsten
+	 * Zustands
 	 */
 	private int naechsterAmpelzustand() {
-		
+
 		// Baumarkt geschlossen
 		if ((uhrzeit.compareTo(umgebung.getLadenschlusszeit()) >= 0)
 				&& uhrzeit.compareTo(umgebung.getOeffnungszeit()) < 0) {
@@ -176,27 +195,23 @@ public class ZustandImpl implements Zustand {
 		}
 
 		// Parkplatz voll
-		if (uhrzeitListeParkplatz.size() == (umgebung.getParkplatzKapazitaet()*9/10)) {
+		if (uhrzeitListeParkplatz.size() >= (umgebung.getParkplatzKapazitaet() * 9 / 10)) {
 			if (!(ampelzustand == Zustand.EINFAHRT))
-				return Zustand.AUSFAHRT;
+				return Zustand.STOP_BEIDE;
 			else
 				return Zustand.STOP_EINFAHRT;
 		}
 
-		// EINFAHRT -> EINFAHRT oder STOP_EINFAHRT -> EINFAHRT
+		// STOP_EINFAHRT -> EINFAHRT
 		// wenn Autos nur in Einfahrt
 		if (anzahlEinfahrtAutos > 0 && anzahlAusfahrtAutos == 0) {
-			if (ampelzustand == Zustand.EINFAHRT)
-				return Zustand.EINFAHRT;
 			if (ampelzustand == Zustand.STOP_EINFAHRT)
 				return Zustand.EINFAHRT;
 		}
 
-		// AUSFAHRT -> AUSFAHRT oder STOP_AUSFAHRT -> AUSFAHRT
+		// STOP_AUSFAHRT -> AUSFAHRT
 		// wenn Autos nur in Ausfahrt
 		if (anzahlEinfahrtAutos == 0 && anzahlAusfahrtAutos > 0) {
-			if (ampelzustand == Zustand.AUSFAHRT)
-				return Zustand.AUSFAHRT;
 			if (ampelzustand == Zustand.STOP_AUSFAHRT)
 				return Zustand.AUSFAHRT;
 			if (ampelzustand == Zustand.STOP_BEIDE)
@@ -221,7 +236,7 @@ public class ZustandImpl implements Zustand {
 		case (Zustand.STOP_AUSFAHRT):
 			return Zustand.EINFAHRT;
 		case (Zustand.STOP_BEIDE):
-			return Zustand.EINFAHRT;
+			return Zustand.AUSFAHRT;
 		default:
 			return STOP_AUSFAHRT;
 		}
@@ -235,7 +250,7 @@ public class ZustandImpl implements Zustand {
 		// Dauer des Zustandes Ausfahrt berechnen
 		Uhrzeit zeitAusfahrt = umgebung.getAutoAbstandzeit().multipliziere(
 				anzahlAusfahrtAutos);
-		
+
 		// Überschuss an Autos
 		int ueberschussEinfahrt = (anzahlEinfahrtAutos + uhrzeitListeParkplatz
 				.size()) - umgebung.getParkplatzKapazitaet();
@@ -243,36 +258,47 @@ public class ZustandImpl implements Zustand {
 		// gibt es einen ï¿½berschuss an Autos?
 		// wenn ja (ï¿½berschuss > 0), muss der ï¿½berschuss von der Anzahl
 		// der Autos in der Einfahrt/Ausfahrt abgezogen werden
+
+		Uhrzeit maximaleGruenphase = new UhrzeitImpl(umgebung
+				.getMaximaleRotPhase().gesamtZeitSekunden()
+				- umgebung.getBaustellenPassierZeit().gesamtZeitSekunden());
 		if (ueberschussEinfahrt > 0)
 			zeitEinfahrt = umgebung.getAutoAbstandzeit().multipliziere(
 					anzahlEinfahrtAutos - ueberschussEinfahrt);
 
 		switch (neuerAmpelzustand) {
 		case (Zustand.EINFAHRT):
-			if (zeitEinfahrt.compareTo(umgebung.getMaximaleRotPhase()) > 0)
-				return neueUhrzeit.addiere(umgebung.getMaximaleRotPhase());
+			if (zeitEinfahrt.compareTo(maximaleGruenphase) > 0)
+				return neueUhrzeit.addiere(maximaleGruenphase);
 			else
 				return neueUhrzeit.addiere(zeitEinfahrt);
 		case (Zustand.STOP_EINFAHRT):
 			return neueUhrzeit.addiere(umgebung.getBaustellenPassierZeit());
 		case (Zustand.AUSFAHRT):
-			if (zeitAusfahrt.compareTo(umgebung.getMaximaleRotPhase()) > 0)
-				return neueUhrzeit.addiere(umgebung.getMaximaleRotPhase());
+			if (zeitAusfahrt.compareTo(maximaleGruenphase) > 0)
+				return neueUhrzeit.addiere(maximaleGruenphase);
 			else
 				return neueUhrzeit.addiere(zeitAusfahrt);
 		case (Zustand.STOP_AUSFAHRT):
 			return neueUhrzeit.addiere(umgebung.getBaustellenPassierZeit());
 		case (Zustand.STOP_BEIDE):
-			Uhrzeit naechste = naechsteAutoEinfahrt;
-			Uhrzeit curr = uhrzeitListeParkplatz.peek();
-			
-			if (curr.compareTo(naechste) < 0) {
-				naechste = curr;
+			Uhrzeit naechste;
+			if (uhrzeitListeParkplatz.size() >= (umgebung
+					.getParkplatzKapazitaet() * 9 / 10)) {
+				naechste = uhrzeitListeParkplatz.peek();
+			} else {
+				naechste = naechsteAutoEinfahrt;
+				Uhrzeit curr = uhrzeitListeParkplatz.peek();
+
+				if (curr != null && curr.compareTo(naechste) < 0) {
+					naechste = curr;
+				}
 			}
-			
+			System.out.println("!!!!!!!!!!!!!!!!!STOP BEIDE: " + naechste);
+
 			return naechste.addiere(umgebung.getAutoAbstandzeit());
 		default:
-			return neueUhrzeit.addiere(umgebung.getMaximaleRotPhase());
+			return neueUhrzeit.addiere(maximaleGruenphase);
 		}
 	}
 

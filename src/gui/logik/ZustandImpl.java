@@ -76,8 +76,6 @@ public class ZustandImpl implements Zustand {
 
 	public Zustand naechsterZustand() {
 
-		IOSystem.loggeZustand(this);
-
 		int neueVorbeigefahreneAutos = vorbeigefahreneAutos;
 		Uhrzeit neueUhrzeit = naechsteUhrzeit();
 		Uhrzeit neueAmpelzustandZeit = ampelzustandZeit;

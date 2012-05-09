@@ -45,6 +45,7 @@ public class Simulation
         for (int i = 0; i < 50; i++)
         {
             zustand = zustand.naechsterZustand();
+            IOSystem.loggeZustand(zustand);
             System.out.println(zustand);
         }
     }

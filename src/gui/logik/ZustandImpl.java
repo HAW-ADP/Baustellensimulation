@@ -259,6 +259,11 @@ public class ZustandImpl implements Zustand {
 
 	private Uhrzeit naechsteAmpelzustandZeit(int neuerAmpelzustand,
 			Uhrzeit neueUhrzeit) {
+		
+		if(neueUhrzeit.compareTo(umgebung.getLadenschlusszeit())>0){
+			return umgebung.getLadenschlusszeit().addiere(umgebung.getMaxParkdauer()).addiere(umgebung.getBaustellenPassierZeit());
+		}
+		
 		// Dauer des Zustandes Einfahrt berechnen
 		Uhrzeit zeitEinfahrt = umgebung.getAutoAbstandzeit().multipliziere(
 				anzahlEinfahrtAutos);

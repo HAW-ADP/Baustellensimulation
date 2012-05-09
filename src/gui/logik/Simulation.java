@@ -47,8 +47,5 @@ public class Simulation
             zustand = zustand.naechsterZustand();
             System.out.println(zustand);
         }
-
-        zustand = IOSystem.leseZustand("eingabe");
-        System.out.println(zustand);
     }
 }

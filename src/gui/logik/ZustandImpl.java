@@ -49,12 +49,15 @@ public class ZustandImpl implements Zustand {
 
 	/** Enthaelt saemtliche Simulationsumgebungskonstanten */
 	private final ZustandsUmgebung umgebung;
+	
+	/** Die Anzahl der Autos, die an der Einfahrt vorbeigefahren sind */
+	private final int vorbeigefahreneAutos;
 
 	public ZustandImpl(int anzahlAusfahrtAutos, int anzahlEinfahrtAutos,
 			int ampelzustand, Uhrzeit ampelzustandZeit, Uhrzeit uhrzeit,
 			Queue<Uhrzeit> uhrzeitListeParkplatz,
 			Queue<Uhrzeit> uhrzeitListeBaustelle, Uhrzeit naechsteAutoEinfahrt,
-			Uhrzeit letzteBaustellenEinfahrt, ZustandsUmgebung umgebung) {
+			Uhrzeit letzteBaustellenEinfahrt, ZustandsUmgebung umgebung, int vorbeigefahreneAutos) {
 
 		this.anzahlAusfahrtAutos = anzahlAusfahrtAutos;
 		this.anzahlEinfahrtAutos = anzahlEinfahrtAutos;
@@ -66,12 +69,14 @@ public class ZustandImpl implements Zustand {
 		this.naechsteAutoEinfahrt = naechsteAutoEinfahrt;
 		this.letzteBaustellenEinfahrt = letzteBaustellenEinfahrt;
 		this.umgebung = umgebung;
+		this.vorbeigefahreneAutos = vorbeigefahreneAutos;
 	}
 
 	public Zustand naechsterZustand() {
 
 		IOSystem.loggeZustand(this);
 
+		int neueVorbeigefahreneAutos = vorbeigefahreneAutos;
 		Uhrzeit neueUhrzeit = naechsteUhrzeit();
 		Uhrzeit neueAmpelzustandZeit = ampelzustandZeit;
 		int naechsterAmpelzustand = ampelzustand;
@@ -98,8 +103,6 @@ public class ZustandImpl implements Zustand {
 				&& letzteBaustellenEinfahrt.compareTo(neueUhrzeit) <= (-1 * umgebung
 						.getAutoAbstandzeit().gesamtZeitSekunden())) {
 			neueAnzahlEinfahrtAutos--;
-
-			System.out.println("AUTO Einfahrt => Baustelle");
 
 			neueUhrzeitListeBaustelle.add(uhrzeit.addiere(umgebung
 					.getBaustellenPassierZeit()));
@@ -159,6 +162,8 @@ public class ZustandImpl implements Zustand {
 			neueNaechsteAutoEinfahrt = neueNaechsteAutoEinfahrt(neueUhrzeit);
 			if (neueAnzahlEinfahrtAutos < umgebung.getEinfahrtKapazitaet())
 				neueAnzahlEinfahrtAutos++;
+			else
+				neueVorbeigefahreneAutos++;
 		}
 
 		/** Autos verlassen Parkplatz -> Ausfahrt */
@@ -389,8 +394,13 @@ public class ZustandImpl implements Zustand {
 		return umgebung.getParkplatzKapazitaet();
 	}
     
-        @Override
+    @Override
 	public int getEinfahrtgroesse() {
 		return umgebung.getEinfahrtKapazitaet();
+	}
+        
+    @Override
+	public int getVorbeigefahreneAutos() {
+		return vorbeigefahreneAutos;
 	}
 }

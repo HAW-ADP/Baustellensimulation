@@ -35,8 +35,8 @@ public class IOSystem {
 		Uhrzeit minAutoAnkunft = new UhrzeitImpl(0,0,15);
 		Uhrzeit maxAutoAnkunft = new UhrzeitImpl(0,1,0);
 		Uhrzeit maxRot = new UhrzeitImpl(0,2,0);
-		int parkplatzKapazitaet = 1;
-		int einfahrtKapazitaet = 1;
+		int parkplatzKapazitaet = 15;
+		int einfahrtKapazitaet = 15;
 		
 		Uhrzeit naechsteAutoEinfahrt = new UhrzeitImpl(10,0,0);
 		
@@ -53,7 +53,7 @@ public class IOSystem {
 		String[] inputAry = null;
 		
 		if(fileScanner != null)
-			inputAry = fileScanner.next().split(";");
+                    inputAry = fileScanner.next().split(";");
 		
 		if(inputAry != null && inputAry.length == 10){
 			autoAbstand = new UhrzeitImpl(inputAry[0]);

@@ -90,10 +90,10 @@ public class GuiT extends PApplet {
         fill(255);
         text(zustand.getUhrzeit().toString(), 400, 20);
         fill(0);
-        rect(140, 453, 170, 35);
+        rect(150, 408, 170, 15);
         fill(255);
-        text(zustand.getVorbeigefahreneAutos(), 145, 465);
-        text(": Autos vorbeigefahren", 175, 465);
+        text(zustand.getVorbeigefahreneAutos(), 155, 420);
+        text(": Autos vorbeigefahren", 175, 420);
         // Immer wieder laden, da das Spielfeld verwischt wird
         image(weltUnten, 0, 469);
         // Ampel fï¿½r die Einfahrt

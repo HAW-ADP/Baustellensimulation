@@ -38,7 +38,7 @@ public class Simulation
 
         Zustand zustand = new ZustandImpl(0, 0, Zustand.STOP_BEIDE, naechstesAutoEinfahrt,
                 startzeit, new PriorityQueue<Uhrzeit>(), new PriorityQueue<Uhrzeit>(),
-                naechstesAutoEinfahrt, new UhrzeitImpl(0, 0, 0), umgebung);
+                naechstesAutoEinfahrt, new UhrzeitImpl(0, 0, 0), umgebung,0);
 
         System.out.println(zustand);
 

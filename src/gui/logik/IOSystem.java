@@ -75,7 +75,7 @@ public class IOSystem {
 
 		Zustand zustand = new ZustandImpl(0,0, Zustand.STOP_AUSFAHRT, naechsteAutoEinfahrt,
 										  umgebung.getOeffnungszeit(), new PriorityQueue<Uhrzeit>(), new PriorityQueue<Uhrzeit>(),
-										  naechsteAutoEinfahrt, new UhrzeitImpl(0,0,0), umgebung);
+										  naechsteAutoEinfahrt, new UhrzeitImpl(0,0,0), umgebung,0);
 		
 		return zustand;
 	}

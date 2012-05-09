@@ -178,7 +178,7 @@ public class ZustandImpl implements Zustand {
 				neueAnzahlEinfahrtAutos, naechsterAmpelzustand,
 				neueAmpelzustandZeit, neueUhrzeit, neueUhrzeitListeParkplatz,
 				neueUhrzeitListeBaustelle, neueNaechsteAutoEinfahrt,
-				neueLetzteBaustellenEinfahrt, umgebung);
+				neueLetzteBaustellenEinfahrt, umgebung, neueVorbeigefahreneAutos);
 
 	}
 

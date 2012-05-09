@@ -202,7 +202,7 @@ public class ZustandImpl implements Zustand {
 	private int naechsterAmpelzustand() {
 
 		// Baumarkt geschlossen
-		if ((uhrzeit.compareTo(umgebung.getLadenschlusszeit()) >= 0)){
+		if (uhrzeit.compareTo(umgebung.getLadenschlusszeit()) >= 0){
 			if (!(ampelzustand == Zustand.EINFAHRT))
 				return Zustand.AUSFAHRT;
 			else

@@ -3,7 +3,6 @@ package gui.logik;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
-import java.util.Iterator;
 
 public class ZustandImpl implements Zustand {
 

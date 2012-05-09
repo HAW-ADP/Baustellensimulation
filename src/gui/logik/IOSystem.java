@@ -35,8 +35,8 @@ public class IOSystem {
 		Uhrzeit minAutoAnkunft = new UhrzeitImpl(0,0,15);
 		Uhrzeit maxAutoAnkunft = new UhrzeitImpl(0,1,0);
 		Uhrzeit maxRot = new UhrzeitImpl(0,2,0);
-		int parkplatzKapazitaet = 100;
-		int einfahrtKapazitaet = 25;
+		int parkplatzKapazitaet = 1;
+		int einfahrtKapazitaet = 1;
 		
 		Uhrzeit naechsteAutoEinfahrt = new UhrzeitImpl(10,0,0);
 		
@@ -69,8 +69,7 @@ public class IOSystem {
 			naechsteAutoEinfahrt = new UhrzeitImpl(inputAry[9]);
 		}
 		
-		ZustandsUmgebung umgebung = new ZustandsUmgebung(autoAbstand, baustellenZeit,
-					 									 minParkDauer, maxParkDauer, minAutoAnkunft,
+		ZustandsUmgebung umgebung = new ZustandsUmgebung(autoAbstand, baustellenZeit,minParkDauer, maxParkDauer, minAutoAnkunft,
 					 									 maxAutoAnkunft, maxRot, parkplatzKapazitaet,
 					 									 einfahrtKapazitaet);
 

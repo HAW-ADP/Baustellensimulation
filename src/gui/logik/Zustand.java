@@ -22,5 +22,9 @@ public interface Zustand {
 	public int getParkplatzAutos();
 	
 	public int getBaustellenAutos();
+        
+	public int getParkhausgroesse();
+        
+        public int getEinfahrtgroesse();
 	
 }

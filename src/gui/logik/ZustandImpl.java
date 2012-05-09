@@ -251,7 +251,7 @@ public class ZustandImpl implements Zustand {
 		Uhrzeit zeitAusfahrt = umgebung.getAutoAbstandzeit().multipliziere(
 				anzahlAusfahrtAutos);
 
-		// Überschuss an Autos
+		// ï¿½berschuss an Autos
 		int ueberschussEinfahrt = (anzahlEinfahrtAutos + uhrzeitListeParkplatz
 				.size()) - umgebung.getParkplatzKapazitaet()*9/10;
 
@@ -382,5 +382,15 @@ public class ZustandImpl implements Zustand {
 	@Override
 	public int getBaustellenAutos() {
 		return uhrzeitListeBaustelle.size();
+	}
+        
+    @Override
+	public int getParkhausgroesse() {
+		return umgebung.getParkplatzKapazitaet();
+	}
+    
+        @Override
+	public int getEinfahrtgroesse() {
+		return umgebung.getEinfahrtKapazitaet();
 	}
 }

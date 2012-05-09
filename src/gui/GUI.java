@@ -9,7 +9,7 @@ import processing.core.PImage;
 public class GUI extends PApplet {
     // Position Parkhaus
 
-    final private int PARKHAUSX = 390;
+    final private int PARKHAUSX = 290;
     final private int PARKHAUSY = 187;
     // Position Wartebereich f�r die Ausfahrt
     final private int AUSFAHRTWARTEBEREICHX = 100;
@@ -27,8 +27,8 @@ public class GUI extends PApplet {
     final private int AUSFAHRTAMPELX = 90;
     final private int AUSFAHRTAMPELY = 240;
     // Fixe Größen
-    final private int PARKHAUSZEILEKAPAZITAET = 20;
-    final private int PARKHAUSSPALTEKAPAZITAET = 10;
+    final private int PARKHAUSZEILEKAPAZITAET = 10;
+    final private int PARKHAUSSPALTEKAPAZITAET = 20;
     final private int EINFAHRTKAPAZITAET = 3;
     // final private int AUSFAHRTKAPAZITAET = 10;
     private PImage welt = loadImage("src\\gui\\img\\welt.jpg");
@@ -119,7 +119,7 @@ public class GUI extends PApplet {
         zeichneAmpel(AUSFAHRTAMPELX, AUSFAHRTAMPELY, ampelAusfahrt);
         bewegeDemoAuto();
         //Automatischer Modus
-        if (pause >= 10) {
+        if (pause >= 0) {
             if (gestartet) {
                 this.zustand = this.zustand.naechsterZustand();
                 this.ampelWechsleZustand();

@@ -198,6 +198,7 @@ public class ZustandImpl implements Zustand {
 	 * STOP_AUSFAHRT oder STOP_BEIDE zurueck sowie die Dauer dieses naechsten
 	 * Zustands
 	 */
+	
 	private int naechsterAmpelzustand() {
 
 		// Baumarkt geschlossen
@@ -210,6 +211,9 @@ public class ZustandImpl implements Zustand {
 
 		// Parkplatz voll
 		if (uhrzeitListeParkplatz.size() >= (umgebung.getParkplatzKapazitaet() * 9 / 10)) {
+			if (ampelzustand == Zustand.AUSFAHRT) {
+				return Zustand.STOP_AUSFAHRT;
+			}
 			if (!(ampelzustand == Zustand.EINFAHRT))
 				return Zustand.STOP_BEIDE;
 			else

@@ -1,5 +1,8 @@
 package gui.logik;
 
+import gui.logik.UhrzeitImpl;
+import gui.logik.ZustandImpl;
+
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
@@ -94,6 +97,15 @@ public class ZustandImpl implements Zustand {
 
 		Uhrzeit neueNaechsteAutoEinfahrt = naechsteAutoEinfahrt;
 
+		//nach Ladenoeffnungszeit und Parkplatz, Ausfahrt und Baustelle leer:
+		if((this.uhrzeit.compareTo(this.umgebung.getLadenschlusszeit()) >0) && this.getParkhausgroesse() == 0 && this.getAusfahrtAutos() == 0 && this.getBaustellenAutos() == 0){
+			return new ZustandImpl(neueAnzahlAusfahrtAutos,
+					neueAnzahlEinfahrtAutos, naechsterAmpelzustand,
+					neueAmpelzustandZeit, getUhrzeit().copy(), neueUhrzeitListeParkplatz,
+					neueUhrzeitListeBaustelle, neueNaechsteAutoEinfahrt,
+					neueLetzteBaustellenEinfahrt, umgebung, neueVorbeigefahreneAutos);
+		}
+		
 		Random rand = new Random();
 
 		/** Auto faehrt von Einfahrt in Baustelle */
@@ -190,8 +202,7 @@ public class ZustandImpl implements Zustand {
 	private int naechsterAmpelzustand() {
 
 		// Baumarkt geschlossen
-		if ((uhrzeit.compareTo(umgebung.getLadenschlusszeit()) >= 0)
-				&& uhrzeit.compareTo(umgebung.getOeffnungszeit()) < 0) {
+		if ((uhrzeit.compareTo(umgebung.getLadenschlusszeit()) >= 0)){
 			if (!(ampelzustand == Zustand.EINFAHRT))
 				return Zustand.AUSFAHRT;
 			else
@@ -308,7 +319,7 @@ public class ZustandImpl implements Zustand {
 	private Uhrzeit neueNaechsteAutoEinfahrt(Uhrzeit neueUhrzeit) {
 		Random rand = new Random();
 
-		if (neueUhrzeit.compareTo(umgebung.getLadenschlusszeit()) < 0) {
+		if (neueUhrzeit.compareTo(new UhrzeitImpl(umgebung.getLadenschlusszeit().gesamtZeitSekunden()-umgebung.getMinParkdauer().gesamtZeitSekunden()-umgebung.getMaxAutoAnkunft().gesamtZeitSekunden())) < 0) {
 			int minAnkunft = umgebung.getMinAutoAnkunft().gesamtZeitSekunden();
 			int maxAnkunft = umgebung.getMaxAutoAnkunft().gesamtZeitSekunden();
 

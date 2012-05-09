@@ -55,7 +55,7 @@ public class GUI extends PApplet {
             EINFAHRTKAPAZITAET);
     Zustand zustand = new ZustandImpl(0, 0, Zustand.STOP_AUSFAHRT, naechstesAutoEinfahrt,
             startzeit, new PriorityQueue<Uhrzeit>(), new PriorityQueue<Uhrzeit>(),
-            naechstesAutoEinfahrt, new UhrzeitImpl(0, 0, 0), umgebung);
+            naechstesAutoEinfahrt, new UhrzeitImpl(0, 0, 0), umgebung,0);
     private float demoAuto1PosX = 500;
     private float demoAuto1PosY = 471;
     private float demoAuto2PosX = 0;

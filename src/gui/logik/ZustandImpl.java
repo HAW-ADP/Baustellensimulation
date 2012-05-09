@@ -1,6 +1,7 @@
 package gui.logik;
 
 import gui.logik.UhrzeitImpl;
+import gui.logik.Zustand;
 import gui.logik.ZustandImpl;
 
 import java.util.PriorityQueue;
@@ -218,7 +219,7 @@ public class ZustandImpl implements Zustand {
 		// STOP_EINFAHRT -> EINFAHRT
 		// wenn Autos nur in Einfahrt
 		if (anzahlEinfahrtAutos > 0 && anzahlAusfahrtAutos == 0) {
-			if (ampelzustand == Zustand.STOP_EINFAHRT)
+			if (ampelzustand == Zustand.STOP_EINFAHRT || ampelzustand == Zustand.STOP_BEIDE)
 				return Zustand.EINFAHRT;
 		}
 
@@ -234,7 +235,7 @@ public class ZustandImpl implements Zustand {
 		// STOP_EINFAHRT/STOP_AUSFAHRT -> STOP_BEIDE
 		if (anzahlEinfahrtAutos == 0 && anzahlAusfahrtAutos == 0) {
 			if (ampelzustand == Zustand.STOP_EINFAHRT
-					|| ampelzustand == Zustand.STOP_AUSFAHRT)
+					|| ampelzustand == Zustand.STOP_AUSFAHRT || ampelzustand == Zustand.STOP_BEIDE)
 				return Zustand.STOP_BEIDE;
 		}
 
